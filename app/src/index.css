@@ -1,0 +1,20 @@
+html,
+body {
+  margin: 0
+}
+
+.App {
+  height: 100%;
+  width: 100%;
+  overflow: hidden; 
+}
+ 
+.wrapper{
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+#root {
+    height: 100vh
+}
