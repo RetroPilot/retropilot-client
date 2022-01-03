@@ -8,8 +8,6 @@ const initialState = {
 
 
 
-const socket = new WebSocket('ws://localhost:81');
-
 
 
 
@@ -20,21 +18,23 @@ const Store = ({ children }) => {
     const [state, dispatch] = useReducer(Reducer, initialState);
 
     useEffect(() => {
-
-        
-
-        socket.addEventListener('message', function (event) {
-            const data = JSON.parse(event.data)
+        const ws = new WebSocket('ws://localhost:81');    
     
+        ws.onmessage = ({ data }) => {
+            data = JSON.parse(data)
+            console.log("Message")    
             if (data.id) {
                 dispatch({ type: "ADD_DATA", id: data.id, data: data })
             }
-        });
-    
-        socket.addEventListener('open', function (event) {
-            console.log("web socket connected")
-        });
-    });
+        };
+        return () => {
+          try {
+            ws.close();
+          } catch (e) {}
+        };
+      }, []);
+
+ 
 
 
     
