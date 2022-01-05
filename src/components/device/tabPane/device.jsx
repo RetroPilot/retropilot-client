@@ -27,6 +27,8 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import {context as SnackbarContext} from "./../../../context/toast"
+
 
 const theme = createTheme();
 function formatDate(timestampMs) {
@@ -35,10 +37,33 @@ function formatDate(timestampMs) {
 
 
 
+
+
+
 export default function SignIn(props) {
 
   const [value, setValue] = React.useState(0);
   const [state, dispatch] = useContext(DeviceContext)
+
+  const [ notifState, notifdispatch ] = useContext(SnackbarContext)
+
+
+  function pubKeyClipboard(newClip) {
+    navigator.clipboard.writeText(newClip).then(function() {
+      notifdispatch({
+        type: "NEW_TOAST",
+        open: true,
+        msg: "Successfully copied to clipboard!"
+      })
+    }, function() {
+      notifdispatch({
+        type: "NEW_TOAST",
+        open: true,
+        msg: "Failed to write to clipboard!"
+      })
+    });
+  }
+  
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -55,24 +80,23 @@ export default function SignIn(props) {
       <Grid container>
         <Grid item xs={3}>
 
-          <div style={{ padding: '5px' }}>
+          <div >
 
-            <h3>Device {dongle.dongle_id} </h3>
-            <b>Type:</b> {dongle.device_type}<br></br>
+          <b>Nickname:</b> {dongle.nick_name ? dongle.nick_name : `My ${dongle.device_type}`}<br></br>
+          <b>Type:</b> {dongle.device_type}<br></br>
             <b>Serial:</b> {dongle.serial}<br></br>
             <b>IMEI:</b> {dongle.imei}<br></br>
             <b>Registered:</b> {formatDate(dongle.created)}<br></br>
             <b>Last Ping:</b> {formatDate(dongle.last_ping)}<br></br>
             <b>Public Key:</b> -----BEGIN PUBLIC KEY-----
             <Tooltip title="Copy public key">
-              <IconButton  onClick={() => console.log("click")}>
+              <IconButton  onClick={() => pubKeyClipboard(dongle.public_key)}>
                 <ContentCopyIcon  />
               </IconButton>
             </Tooltip>
             <br></br>
 
 
-            <b>Stored Drives: </b> ` + drives.length + `<br></br>
             <b>Quota Storage: </b>{dongle.storage_used} MB / 200000 MB
 
  

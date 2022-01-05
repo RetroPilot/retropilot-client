@@ -26,6 +26,7 @@ export default function Toast(props) {
       autoHideDuration={6000}
       onClose={handleClose}
       message={state.msg}
+      severity="success" 
     />
   );
 }

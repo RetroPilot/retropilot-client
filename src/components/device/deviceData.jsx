@@ -29,8 +29,9 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import { makeStyles } from '@mui/styles';
 import GoogleMapReact from 'google-map-react';
 import axios from "axios"
-
 import {context as SnackbarContext} from "./../../context/toast"
+
+
 
 const useStyles = makeStyles({
   controlsButton: {
@@ -45,6 +46,7 @@ function DeviceControls() {
   const [ state, dispatch ] = useContext(DeviceContext);
 
   const [ notifState, notifdispatch ] = useContext(SnackbarContext)
+
 
 
 

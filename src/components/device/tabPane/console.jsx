@@ -10,8 +10,9 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import { JsonFormatter } from 'react-json-formatter'
+//import { JsonFormatter } from 'react-json-formatter'
 import { context as DeviceContext } from "./../../../context/devices"
+
 
 const JsonStyle = {
   propertyStyle: { color: 'red' },
@@ -59,7 +60,7 @@ function RichContent(props) {
           <Typography>{`${content} - ${key}`} </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <JsonFormatter json={JSON.stringify(localStorage.getItem(`ATH-${key}`))} tabWith='4' JsonStyle={JsonStyle} />
+          {/*<JsonFormatter json={JSON.stringify(localStorage.getItem(`ATH-${key}`))} tabWith='4' JsonStyle={JsonStyle} />*/}
         </AccordionDetails>
       </Accordion>
     )
