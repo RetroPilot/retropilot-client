@@ -31,7 +31,6 @@ import GoogleMapReact from 'google-map-react';
 import axios from "axios"
 
 import {context as SnackbarContext} from "./../../context/toast"
-import {updateDongleInfo, athenaCommandControl} from "./../../controllers/devices"
 
 const useStyles = makeStyles({
   controlsButton: {
@@ -53,18 +52,7 @@ function DeviceControls() {
   }
 
   async function athenaReboot() {
-    const data = await athenaCommandControl("c3a5d816", "reboot");
-    console.log(data);
-    if (data.dispatched) {
-      notifdispatch({type: 'NEW_TOAST', message: 'Athena(Reboot) ISSUED COMMAND', open: true})
-
-    } else if (data.hasOwnProperty("connected") && data.connected === false) {
-      notifdispatch({type: 'NEW_TOAST', message: 'Athena(Reboot) NOT CONNECTED', open: true})
-
-    } else {
-      notifdispatch({type: 'NEW_TOAST', message: 'Athena(Reboot) FAILED', open: true})
-
-    }
+    
   }
 
   return (
@@ -97,18 +85,19 @@ function DeviceControls() {
 }
 
 function DeviceLastSeenMap() {
+  console.log("api key", process.env)
   return (
     <div style={{ height: "500px", width: 'calc(100%)' }}>
 
               <GoogleMapReact
                 height="100px"
-                bootstrapURLKeys={{ key: "AIzaSyAYGRgKRk4G9m8SPIjKUfEZG3cqqXH0enc" }}
+                bootstrapURLKeys={{ key: process.env.REACT_APP_GMAPS_API_KEY }}
                 defaultCenter={{
                   lat: 51.501134,
                   lng: -0.142318
                 }}
                 defaultZoom={17}
-                options={{
+                options={{ 
                   styles: [
                     { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
                     { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -116,7 +105,7 @@ function DeviceLastSeenMap() {
                     {
                       featureType: "administrative.locality",
                       elementType: "labels.text.fill",
-                      stylers: [{ color: "#d59563" }],
+                      stylers: [{ color: "#d59563" }], 
                     },
                     {
                       featureType: "poi",
@@ -196,7 +185,7 @@ function DeviceLastSeenMap() {
 }
 
 
-export default function SignIn() {
+export default function SignIn(props) {
   const classes = useStyles();
   const [ state, dispatch ] = useContext(DeviceContext)
 
@@ -215,9 +204,7 @@ export default function SignIn() {
         <Grid container style={{padding: 30}}>
 
 
-          <Grid item xs={12}>
-            <DeviceControls />
-          </Grid>
+         
 
           <Grid item xs={12}>
             <DeviceLastSeenMap />
@@ -225,7 +212,7 @@ export default function SignIn() {
 
 
           <Grid item xs={12}>
-            <DrivesTable />
+            <DrivesTable dongleId={props.device.dongle_id}/>
           </Grid>
 
         </Grid>

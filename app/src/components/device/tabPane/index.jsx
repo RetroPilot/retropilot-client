@@ -49,7 +49,7 @@ function TabPanel(props) {
 
 
 
-export default function SignIn() {
+export default function SignIn(props) {
 
   const [value, setValue] = React.useState(0);
 
@@ -70,19 +70,19 @@ export default function SignIn() {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        <DeviceInfo />
+        <DeviceInfo dongleId={props.dongleId}/>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <DrivesLogTable />
+        <DrivesLogTable dongleId={props.dongleId}/>
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <CrashLogsTable />
+        <CrashLogsTable dongleId={props.dongleId}/>
       </TabPanel>
       <TabPanel value={value} index={3}>
-        <BootLogsTable />
+        <BootLogsTable dongleId={props.dongleId}/>
       </TabPanel>
       <TabPanel value={value} index={4}>
-        <Console />
+        <Console dongleId={props.dongleId} />
       </TabPanel>
     </div>
   );

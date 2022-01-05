@@ -24,6 +24,7 @@ import DeviceOverview from "./../device/overview"
 import { Scrollbars } from 'rc-scrollbars';
 import { context as DeviceContext } from "./../../context/devices"
 
+
 const theme = createTheme();
 
 
@@ -38,6 +39,8 @@ export default function SignIn() {
   };
   const [deviceState, deviceDispatch] = useContext(DeviceContext);
 
+  console.log("USER ADMIN STATE",  deviceState)
+
 
   let ok = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
   return (
@@ -48,7 +51,7 @@ export default function SignIn() {
           <Paper style={{ minHeight: "100%", maxHeight: "100%", margin: "0" }}>
             <Scrollbars autoHeight={true} autoHeightMin="calc(100vh - 14px)" audoHeightMax="calc(100% - 14px)">
               <div style={{ padding: '5px' }}>
-                { deviceState ? Object.keys(deviceState).map(key => <DeviceOverview device={deviceState[key]}/>) : <p>no</p> }
+                { deviceState ? Object.keys(deviceState.dongles).map(key => <DeviceOverview device={deviceState.dongles[key]}/>) : <p>no</p> }
                 
 
               </div>
@@ -62,7 +65,9 @@ export default function SignIn() {
 
         </Grid>
         <Grid item xs={12} md={8} lg={9} sm={6} xl={10}>
-          <DeviceData />
+         { deviceState.dongles['53331425'] ? <DeviceData device={deviceState.dongles['53331425']} /> : <p>no</p> }
+
+          
         </Grid>
       </Grid>
     </div>

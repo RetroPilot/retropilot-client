@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -18,50 +18,22 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
-import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
+import { context as DeviceContext } from "./../../../context/devices"
+import * as deviceController from "./../../../controllers/devices"
+import { Skeleton, ToolTip } from '@mui/material';
 
-function createData(identifier, car, version, file_size, duration, distance_meters, upload_complete, is_processed, upload_date) {
-  return {
-    identifier, car, version, file_size, duration, distance_meters, upload_complete, is_processed, upload_date
-  };
-}
+import DeleteIcon from '@mui/icons-material/Delete';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+
 
 const rows = [
-  createData(Math.random(), 'Skoda Rapid', '0.8.10', 1000, 500, 100009, "true", "false", "01-11-2021"),
-  createData(Math.random(), 'Skoda Rapid', '0.8.10', 1000, 500, 100009, "true", "false", "01-11-2022"),
+
 ];
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-// This method is created for cross-browser compatibility, if you don't
-// need to support IE11, you can use Array.prototype.sort() directly
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
 const headCells = [
   {
     id: 'identifier',
@@ -117,263 +89,166 @@ const headCells = [
     disablePadding: false,
     label: 'Uploaded at',
   },
-  
+
 ];
 
-function EnhancedTableHead(props) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
-    props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts',
-            }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
+function formatDate(timestampMs) {
+  return new Date(timestampMs).toISOString().replace(/T/, ' ').replace(/\..+/, '');
 }
 
-EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
+function formatDuration(durationSeconds) {
+  durationSeconds = Math.round(durationSeconds);
+  const secs = durationSeconds % 60;
+  let mins = Math.floor(durationSeconds / 60);
+  let hours = Math.floor(mins / 60);
+  mins = mins % 60;
+  const days = Math.floor(hours / 24);
+  hours = hours % 24;
 
-const EnhancedTableToolbar = (props) => {
-  const { numSelected } = props;
-
-  return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Drives
-        </Typography>
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
-  );
-};
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-};
-
-export default function EnhancedTable() {
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-
-    setSelected(newSelected);
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  let response = '';
+  if (days > 0) response += days + 'd ';
+  if (hours > 0 || days > 0) response += hours + 'h ';
+  if (hours > 0 || days > 0 || mins > 0) response += mins + 'm ';
+  response += secs + 's';
+  return response;
+}
 
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+export default function EnhancedTable(props) {
+  console.log("HELLO", props.dongleId)
+  const [state, dispatch] = useContext(DeviceContext)
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+
+
+  useEffect(() => {
+    deviceController.getDrives('53331425').then((res) => {
+      console.log("me result:", res)
+      setTimeout(() => {
+        dispatch({ type: "update_dongle_drive", dongle_id: props.dongleId, drives: res.data })
+      }, 1)
+    })
+
+  }, []);
+
+  console.log("drives", state.dongles[props.dongleId])
+  console.log("drives", typeof state.dongles[props.dongleId])
+
+
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size={'small'}
           >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
+            <TableHead>
+              <TableRow>
+                <TableCell >Identifier</TableCell>
+                <TableCell >Car</TableCell>
+                <TableCell >Version</TableCell>
+                <TableCell >File size</TableCell>
+                <TableCell >Duration</TableCell>
+                <TableCell >Distance</TableCell>
+                <TableCell >uploaded</TableCell>
+                <TableCell >Processed</TableCell>
+                <TableCell >Date</TableCell>
+                <TableCell >Actions</TableCell>
+              </TableRow>
+            </TableHead>
+
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+              {state.dongles[props.dongleId].drives ? state.dongles[props.dongleId].drives.map((row) => {
+                let metadata;
 
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.name)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.name}
-                      selected={isItemSelected}
+                try {
+                  metadata = JSON.parse(row.metadata)
+                } catch (err) { metadata = {} }
+                return (
+                  <TableRow
+                    hover
+                  >
+
+                    <TableCell
+                      scope="row"
+                    >{row.identifier}</TableCell>
+
+                    <TableCell >{metadata.hasOwnProperty('CarParams1') ? metadata.CarParams['CarName'] : "Glorious Skoda"}</TableCell>
+                    <TableCell >{metadata.hasOwnProperty('InitData1') ? metadata.InitData['Version'] : "Lemon boy"}</TableCell>
+                    <TableCell >{Math.round(row.filesize / 1024) + ' MiB'}</TableCell>
+                    <TableCell >{formatDuration(row.duration)}</TableCell>
+                    <TableCell >{Math.round(row.distance_meters / 1000)}</TableCell>
+                    <TableCell >{row.upload_complete.toString()}</TableCell>
+                    <TableCell >{row.is_processed.toString()}</TableCell>
+                    <TableCell >{formatDate(row.drive_date)}</TableCell>
+
+
+                    <TableCell>
+                    <Tooltip title="Open in new window">
+                      <IconButton size="small">
+                        <OpenInNewIcon fontSize="inherit"/>
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="Preserve">
+                      <IconButton size="small">
+                        <FavoriteBorderIcon fontSize="inherit"/>
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="Delete">
+                      <IconButton size="small">
+                        <DeleteIcon fontSize="inherit"/>
+                        </IconButton>
+                    </Tooltip>
+
+                    </TableCell>
+                  </TableRow>
+                )
+
+              }) : 
+
+                [1, 1, 1, 1, 1].map((v) => (
+                  <TableRow
+                  >
+                    <TableCell padding="checkbox">
+                      <Skeleton animation="wave" />
+                    </TableCell>
+                    <TableCell
+                      scope="row"
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        id={labelId}
-                        scope="row"
-                      >
-                        {row.identifier}
-                      </TableCell>
+                      <Skeleton animation="wave" />
+                    </TableCell>
 
-                      <TableCell >{row.car}</TableCell>
-                      <TableCell >{row.version}</TableCell>
-                      <TableCell >{row.file_size}</TableCell>
-                      <TableCell >{row.duration}</TableCell>
-                      <TableCell >{row.distance_meters}</TableCell>
-                      <TableCell >{row.upload_complete}</TableCell>
-                      <TableCell >{row.is_processed}</TableCell>
-                      <TableCell >{row.upload_date}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (33) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
+                    <TableCell ><Skeleton animation="wave" /></TableCell>
+                    <TableCell ><Skeleton animation="wave" /></TableCell>
+                    <TableCell ><Skeleton animation="wave" /></TableCell>
+                    <TableCell ><Skeleton animation="wave" /></TableCell>
+                    <TableCell ><Skeleton animation="wave" /></TableCell>
+                    <TableCell ><Skeleton animation="wave" /></TableCell>
+                    <TableCell ><Skeleton animation="wave" /></TableCell>
+                    <TableCell ><Skeleton animation="wave" /></TableCell>
+                  </TableRow>
+                ))
+
+
+              }
+
+
+
+
+
+
+
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 10000]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+
       </Paper>
     </Box>
   );

@@ -32,11 +32,13 @@ import CssBaseline from '@mui/material/CssBaseline';
 function App() {
 
 
+
+
   const theme = React.useMemo(
     () =>
       createTheme({
         palette: {
-          mode: true ? 'dark' : 'light',
+          mode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
         },
       }),
     [true],

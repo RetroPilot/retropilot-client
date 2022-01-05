@@ -34,38 +34,26 @@ const stylezz = {
 
 function timeSince(date) {
 
+
+
   var seconds = Math.floor((new Date() - date) / 1000);
 
-  var interval = seconds / 31536000;
+  if (seconds / 86400 > 1) {
+    return Math.floor(seconds / 86400) + `d`;
+  } else if (seconds / 3600 > 1) {
+    return Math.floor(seconds / 3600) + `h`;
+  } else if (seconds / 60 > 1) {
+    return Math.floor(seconds / 60) + `m`;
+  } else {
+    return "just now";
+  }
 
-  if (interval > 1) {
-    return Math.floor(interval) + " years";
-  }
-  interval = seconds / 2592000;
-  if (interval > 1) {
-    return Math.floor(interval) + " months";
-  }
-  interval = seconds / 86400;
-  if (interval > 1) {
-    return Math.floor(interval) + " days";
-  }
-  interval = seconds / 3600;
-  if (interval > 1) {
-    return Math.floor(interval) + " hours";
-  }
-  interval = seconds / 60;
-  if (interval > 1) {
-    return Math.floor(interval) + " minutes";
-  } 
-  return Math.floor(seconds) + "s";
 }
-var aDay = 24*60*60*1000;
-console.log(timeSince(new Date(Date.now()-aDay)));
-console.log(timeSince(new Date(Date.now()-aDay*2)));
+
 
 export default function SignIn(props) {
 
-  const [state, setState] = React.useState({count: 0, last_seen: 0});
+  const [state, setState] = React.useState({ count: 0, last_seen: 0 });
   const device = props.device;
 
   // Reloads component to update X time ago
@@ -74,20 +62,23 @@ export default function SignIn(props) {
 
   useEffect(() => {
     setInterval(() => {
-      setState({...state, count: state.count+1})
-    }, 5000)});
+      setState({ ...state, count: state.count + 1 })
+    }, 60 * 1000)
+  });
 
+
+  const deviceLastSeen = timeSince(new Date(device.last_seen));
 
 
 
   return (
     <div>
-      <ButtonBase style={{ padding: '10px'}}>
-        <Grid container spacing={3}>
+      <ButtonBase style={{ padding: '10px' }}>
+        <Grid container spacing={2}>
           <Grid item xs={4}>
             <img src="/c3.webp" style={{ width: "100%" }} />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={8} style={{ textAlign: 'left' }}>
             {/* <TextField
               defaultValue={"SuperSkoda"}
               size="small"
@@ -109,25 +100,27 @@ export default function SignIn(props) {
 
 
             />*/}
-            <Typography variant="body2" gutterBottom>{device.dongle_id}</Typography>
+            <Typography variant="body2" align={"left"} gutterBottom>Dongle: {device.dongle_id}</Typography>
 
-            <Typography variant="body2" gutterBottom>Last Seen: {timeSince(new Date(device.last_seen))} ago</Typography>
+            
+
+           
             <div>
 
-              {device.online ? 
-                <Chip style={{ background: '#004d40', ...stylezz }} label="Online" size="small" variant="outlined" /> : 
-                <Chip style={{ background: '#b71c1c', ...stylezz }} label="Offline" size="small" variant="outlined" />
+              {device.online ?
+                <Chip style={{ background: '#004d40', ...stylezz }} label="Online" size="small" variant="outlined" /> :
+                <Chip style={{ background: '#b71c1c', ...stylezz }} label={`Offline ${deviceLastSeen}`} size="small" variant="outlined" />
               }
-              
-                           
-              <Chip style={{ background: '#dcedc8', ...stylezz }} label="Uploads Enabled" size="small" variant="outlined" />
-              
+
+              <Chip style={{ background: '#004d40', ...stylezz }} label="Active" size="small" variant="outlined" />
+             
             </div>
+            
           </Grid>
         </Grid>
       </ButtonBase>
-      <Divider  />
-      </div>
+      <Divider />
+    </div>
 
   );
 }
