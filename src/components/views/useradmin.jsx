@@ -25,7 +25,7 @@ export default function SignIn() {
       <Grid container spacing={0} style={{ height: '100%', justify: 'space-around', minHeight: "100%", maxHeight: "100%" }} >
         <Grid item xs={12} md={4} lg={3} sm={6} xl={2} style={{ minHeight: "100%", maxHeight: "100%" }}>
           <Paper style={{ minHeight: "100%", maxHeight: "100%", margin: "0" }}>
-            <Scrollbars autoHeight={true} autoHeightMin="calc(100vh - 14px)" audoHeightMax="calc(100% - 14px)">
+            <Scrollbars autoHeight={true} autoHeightMin="calc(100vh - 14px)" autoHeightMax="calc(100% - 14px)">
               <div style={{ padding: '5px' }}>
                 { deviceState ? Object.keys(deviceState.dongles).map(key => <DeviceOverview device={deviceState.dongles[key]}/>) : <p>no</p> }
                 
