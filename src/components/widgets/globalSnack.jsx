@@ -1,14 +1,10 @@
-import React, { useEffect, useState, useContext } from 'react';
-
-
-import {context as DeviceContext} from "./../../context/toast"
-
-
 import Snackbar from '@mui/material/Snackbar';
-import Slide from '@mui/material/Slide';
-import Collapse from '@mui/material/Collapse';
-import Button from '@mui/material/Button';
-import CloseIcon from '@mui/icons-material/Close';
+import React, { useContext } from 'react';
+import { context as DeviceContext } from "./../../context/toast";
+
+
+
+
 
 
 export default function Toast(props) {

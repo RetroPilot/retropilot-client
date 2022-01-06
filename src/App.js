@@ -1,27 +1,14 @@
-import logo from './logo.svg';
-import React, { useEffect, useState, useContext } from 'react';
-
-import Login from "./components/views/login"
-import Home from "./components/views/home"
-import UserAdmin from "./components/views/useradmin"
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
-
-import { UserProvider, UserContext } from "./context/users"
-import DeviceStore from "./context/devices"
-import ToastStore from "./context/toast"
-import GlobalSnack from './components/widgets/globalSnack'
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import React, { useState } from 'react';
+import Login from "./components/views/login";
+import UserAdmin from "./components/views/useradmin";
+import GlobalSnack from './components/widgets/globalSnack';
+import DeviceStore from "./context/devices";
+import ToastStore from "./context/toast";
+import { UserProvider } from "./context/users";
+import * as authenticationController from "./controllers/authentication";
+
 
 
 // Connection opened
@@ -30,6 +17,15 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 
 function App() {
+
+
+  const [session, setSession] = useState(false)
+
+  authenticationController.getSession().then((res) => {
+    setSession(res.data.authenticated)
+
+  })
+
 
 
 
@@ -56,7 +52,7 @@ function App() {
 
         <GlobalSnack />
 
-          <UserAdmin />
+          {session ? <UserAdmin/> : <Login />}
 
           </ToastStore>
         </DeviceStore>

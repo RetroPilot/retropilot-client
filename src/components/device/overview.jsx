@@ -1,31 +1,10 @@
-import React, { useState, useContext, useEffect } from 'react';
-import Avatar from '@mui/material/Avatar';
-import LoadingButton from '@mui/lab/LoadingButton';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { UserContext } from "./../../context/users"
-import { Link } from "react-router-dom";
-import PropTypes from 'prop-types';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
+import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import Done from '@mui/icons-material/Done';
-import ButtonBase from '@mui/material/ButtonBase'
-
 import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import React, { useEffect } from 'react';
+
 
 
 const stylezz = {
@@ -76,7 +55,7 @@ export default function SignIn(props) {
       <ButtonBase style={{ padding: '10px' }}>
         <Grid container spacing={2}>
           <Grid item xs={4}>
-            <img src="/c3.webp" style={{ width: "100%" }} />
+            <img src="/c3.webp" style={{ width: "100%" }} alt="device icon"/>
           </Grid>
           <Grid item xs={8} style={{ textAlign: 'left' }}>
             {/* <TextField

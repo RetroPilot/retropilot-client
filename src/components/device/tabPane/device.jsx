@@ -1,36 +1,16 @@
-import React, { useState, useContext } from 'react';
-import Avatar from '@mui/material/Avatar';
-import LoadingButton from '@mui/lab/LoadingButton';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Link } from "react-router-dom";
-import PropTypes from 'prop-types';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-
-import DrivesLogTable from "./drives";
-import CrashLogsTable from "./crash";
-import BootLogsTable from "./boot";
-import { context as DeviceContext } from "./../../../context/devices"
-
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
-
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import {context as SnackbarContext} from "./../../../context/toast"
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import Skeleton from "@mui/material/Skeleton";
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import React, { useContext } from 'react';
+import { context as DeviceContext } from "./../../../context/devices";
+import { context as SnackbarContext } from "./../../../context/toast";
 
 
-const theme = createTheme();
+
+
 function formatDate(timestampMs) {
   return new Date(timestampMs).toISOString().replace(/T/, ' ').replace(/\..+/, '');
 }
@@ -42,20 +22,17 @@ function formatDate(timestampMs) {
 
 export default function SignIn(props) {
 
-  const [value, setValue] = React.useState(0);
-  const [state, dispatch] = useContext(DeviceContext)
-
-  const [ notifState, notifdispatch ] = useContext(SnackbarContext)
-
+  const [state] = useContext(DeviceContext)
+  const [notifState, notifdispatch] = useContext(SnackbarContext)
 
   function pubKeyClipboard(newClip) {
-    navigator.clipboard.writeText(newClip).then(function() {
+    navigator.clipboard.writeText(newClip).then(function () {
       notifdispatch({
         type: "NEW_TOAST",
         open: true,
         msg: "Successfully copied to clipboard!"
       })
-    }, function() {
+    }, function () {
       notifdispatch({
         type: "NEW_TOAST",
         open: true,
@@ -63,15 +40,25 @@ export default function SignIn(props) {
       })
     });
   }
-  
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
 
   if (!state.dongles[props.dongleId]) { return (<p>no</p>) }
   const dongle = state.dongles[props.dongleId];
-  //   <span style={{maxWidth: "100%", overflow: "scroll", whiteSpace:"nowrap" }}> {dongle.public_key.split(/\r?\n|\r/g).map((key) => (<p style={{margin: 0}}>{key}</p>))}</span>
+
+
+  if (!dongle) {
+    return (
+      <Grid container>
+        <Grid item xs={3}>
+          <Skeleton animation="wave" />
+          <Skeleton animation="wave" />
+          <Skeleton animation="wave" />
+        </Grid>
+
+      </Grid>
+
+    )
+  }
 
   return (
     <div className="wrapper" style={{ marginTop: '10px' }}>
@@ -80,31 +67,23 @@ export default function SignIn(props) {
       <Grid container>
         <Grid item xs={3}>
 
-          <div >
 
           <b>Nickname:</b> {dongle.nick_name ? dongle.nick_name : `My ${dongle.device_type}`}<br></br>
           <b>Type:</b> {dongle.device_type}<br></br>
-            <b>Serial:</b> {dongle.serial}<br></br>
-            <b>IMEI:</b> {dongle.imei}<br></br>
-            <b>Registered:</b> {formatDate(dongle.created)}<br></br>
-            <b>Last Ping:</b> {formatDate(dongle.last_ping)}<br></br>
-            <b>Public Key:</b> -----BEGIN PUBLIC KEY-----
-            <Tooltip title="Copy public key">
-              <IconButton  onClick={() => pubKeyClipboard(dongle.public_key)}>
-                <ContentCopyIcon  />
-              </IconButton>
-            </Tooltip>
-            <br></br>
+          <b>Serial:</b> {dongle.serial}<br></br>
+          <b>IMEI:</b> {dongle.imei}<br></br>
+          <b>Registered:</b> {formatDate(dongle.created)}<br></br>
+          <b>Last Ping:</b> {formatDate(dongle.last_ping)}<br></br>
+          <b>Public Key:</b> -----BEGIN PUBLIC KEY-----
+          <Tooltip title="Copy public key">
+            <IconButton onClick={() => pubKeyClipboard(dongle.public_key)}>
+              <ContentCopyIcon />
+            </IconButton>
+          </Tooltip>
+          <br></br>
 
 
-            <b>Quota Storage: </b>{dongle.storage_used} MB / 200000 MB
-
- 
-          </div>
-
-
-
-
+          <b>Quota Storage: </b>{dongle.storage_used} MB / 200000 MB
         </Grid>
 
 

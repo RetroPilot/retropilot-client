@@ -1,6 +1,4 @@
-import { tableBodyClasses } from "@mui/material";
 import axios from "axios";
-import {context as DeviceContext} from "./../context/devices"
 
 
 
@@ -27,9 +25,9 @@ export async function getAllDevices() {
 
     if (responseData.success === true) {
 
-        responseData.data.map((object)=>{
+        responseData.data.map((object) => {
 
-            dongles = {
+            return dongles = {
                 ...dongles,
                 [object.dongle_id]: {
                     ...object,

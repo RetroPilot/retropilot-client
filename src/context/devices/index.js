@@ -1,5 +1,5 @@
-import React, { createContext, useReducer, useEffect, useRef } from "react";
-import * as deviceController from "./../../controllers/devices"
+import React, { createContext, useEffect, useReducer } from "react";
+import * as deviceController from "./../../controllers/devices";
 
 function process(state, action) {
     if (action.type !== "ADD_DATA") { return state }
@@ -7,7 +7,6 @@ function process(state, action) {
     switch (action.data.command) {
 
         case "dongle_status":
-            console.log("dongle:", action.data.data.dongle_id)
             return {
                 ...state,
                 dongles: {
@@ -19,14 +18,7 @@ function process(state, action) {
                         dongle_id: action.data.data.dongle_id
                     }
                 }
-
             }
-
-        case "get_drives": {
-
-
-
-        }
         default:
             return state;
     }
@@ -42,14 +34,12 @@ export const Reducer = (state, action) => {
             return process(state, action);
         case "fetch_all_dongles":
             console.log("fetch", action)
-
             return {
                 ...state,
                 dongles: action.data
             }
 
         case "update_dongle_drive":
-
             return {
                 ...state,
                 dongles: {
@@ -85,9 +75,17 @@ export const Reducer = (state, action) => {
                 }
             }
 
+        case "user_authentication":
+            return {
+                ...state,
+                user: action.user
+            }
 
         default:
             return state;
+
+
+      
     }
 };
 
@@ -115,7 +113,6 @@ const Store = ({ children }) => {
 
         deviceController.getAllDevices().then((devices) => {
             console.log("store", devices)
-
 
             dispatch({ type: "fetch_all_dongles", data: devices })
         })

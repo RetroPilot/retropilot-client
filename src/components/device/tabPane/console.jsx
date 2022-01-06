@@ -1,25 +1,16 @@
-import React, { useState, useContext } from 'react';
-import PropTypes from 'prop-types';
-import { alpha } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-
+/*import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Typography from '@mui/material/Typography';*/
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import React, { useContext } from 'react';
 //import { JsonFormatter } from 'react-json-formatter'
-import { context as DeviceContext } from "./../../../context/devices"
 
 
-const JsonStyle = {
-  propertyStyle: { color: 'red' },
-  stringStyle: { color: 'green' },
-  numberStyle: { color: 'darkorange' }
-}
 
+/*
 function RichContent(props) {
 
   const content = props.content;
@@ -38,18 +29,15 @@ function RichContent(props) {
         <Typography>{`Picture - ${key}`} </Typography>
       </AccordionSummary>
       <AccordionDetails>
-      <img src={`data:image/gif;base64,${content.data.return.result.jpegBack}`} />
-      <img src={`data:image/gif;base64,${content.data.return.result.jpegFront}`} />
+      <img src={`data:image/gif;base64,${content.data.return.result.jpegBack}`} alt="athena road"/>
+      <img src={`data:image/gif;base64,${content.data.return.result.jpegFront}`} alt="athena DM"/>
       </AccordionDetails>
     </Accordion>
       )
 
 
   } else {
-    console.log("props:", props)
-    console.log("key:",key)
-    console.log( "ls", localStorage.getItem(`ATH-${key}`))
-    console.log("content:", content);
+
     return (
       <Accordion TransitionProps={{ unmountOnExit: true }} >
         <AccordionSummary
@@ -60,24 +48,17 @@ function RichContent(props) {
           <Typography>{`${content} - ${key}`} </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          {/*<JsonFormatter json={JSON.stringify(localStorage.getItem(`ATH-${key}`))} tabWith='4' JsonStyle={JsonStyle} />*/}
+          {<JsonFormatter json={JSON.stringify(localStorage.getItem(`ATH-${key}`))} tabWith='4' JsonStyle={JsonStyle} />}
         </AccordionDetails>
       </Accordion>
     )
   } 
-
-
-
-
- 
-
-
-}
+} 
+*/
 
 
 export default function Console() {
 
-  const [state, dispatch] = useContext(DeviceContext);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -93,7 +74,7 @@ export default function Console() {
         */}
 
 
-
+ 
       </Paper>
     </Box>
   );
