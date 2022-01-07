@@ -46,7 +46,7 @@ export default function SignIn(props) {
 
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" variant="scrollable"
-  scrollButtons="auto">
+          scrollButtons="auto">
           <Tab label="Device" />
           <Tab label="Drives" />
           <Tab label="Crashes" />
@@ -55,16 +55,16 @@ export default function SignIn(props) {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        <DeviceInfo dongleId={props.dongleId}/>
+        <DeviceInfo dongleId={props.dongleId} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <DrivesLogTable dongleId={props.dongleId}/>
+        <DrivesLogTable dongleId={props.dongleId} />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <CrashLogsTable dongleId={props.dongleId}/>
+        <CrashLogsTable dongleId={props.dongleId} />
       </TabPanel>
       <TabPanel value={value} index={3}>
-        <BootLogsTable dongleId={props.dongleId}/>
+        <BootLogsTable dongleId={props.dongleId} />
       </TabPanel>
       <TabPanel value={value} index={4}>
         <Console dongleId={props.dongleId} />
@@ -72,7 +72,7 @@ export default function SignIn(props) {
 
       {
 
-        
+
       }
     </div>
   );

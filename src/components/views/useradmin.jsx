@@ -10,7 +10,7 @@ import DeviceOverview from "./../device/overview";
 
 
 
- 
+
 export default function SignIn() {
 
 
@@ -27,8 +27,8 @@ export default function SignIn() {
           <Paper style={{ minHeight: "100%", maxHeight: "100%", margin: "0" }}>
             <Scrollbars autoHeight={true} autoHeightMin="calc(100vh - 14px)" autoHeightMax="calc(100% - 14px)">
               <div style={{ padding: '5px' }}>
-                { deviceState ? Object.keys(deviceState.dongles).map(key => <DeviceOverview device={deviceState.dongles[key]}/>) : <p>no</p> }
-                
+                {deviceState ? Object.keys(deviceState.dongles).map(key => <DeviceOverview device={deviceState.dongles[key]} />) : <p>no</p>}
+
 
               </div>
 
@@ -41,9 +41,9 @@ export default function SignIn() {
 
         </Grid>
         <Grid item xs={12} md={8} lg={9} sm={6} xl={10}>
-         { deviceState.dongles['53331425'] ? <DeviceData device={deviceState.dongles['53331425']} /> : <p>no</p> }
+          {deviceState.dongles['53331425'] ? <DeviceData device={deviceState.dongles['53331425']} /> : <p>no</p>}
 
-          
+
         </Grid>
       </Grid>
     </div>

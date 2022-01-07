@@ -1,5 +1,3 @@
-
-
 const Reducer = (state, action) => {
   switch (action.type) {
     case 'NEW_TOAST':
@@ -13,7 +11,7 @@ const Reducer = (state, action) => {
         ...state,
         open: false
       }
-  
+
     default:
       return state;
   }

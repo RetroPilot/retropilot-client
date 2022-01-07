@@ -35,7 +35,6 @@ export default function EnhancedTable(props) {
   const [state, dispatch] = useContext(DeviceContext)
 
   const [, notifDispatch] = useContext(SnackbarContext)
->>>>>>> daa27768571b3535403613585ca93a3532ea51d2
 
   useEffect(() => {
     deviceController.getBootlogs(props.dongleId).then((res) => {
@@ -70,7 +69,6 @@ export default function EnhancedTable(props) {
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
               {state.dongles[props.dongleId].boot ? state.dongles[props.dongleId].boot.map((row) => {
-      
                 return (
                   <TableRow hover>
                     <TableCell >{helpers.formatDate(row.date)}</TableCell>

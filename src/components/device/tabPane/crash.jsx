@@ -25,7 +25,7 @@ import * as helpers from "./../../../controllers/helpers"
 
 function buildContent(row) {
   return (
-    <TableRow 
+    <TableRow
       hover
     >
 
@@ -101,7 +101,6 @@ export default function EnhancedTable(props) {
             </TableHead>
 
             <TableBody>
-              
               {state.dongles[props.dongleId].crash ?
                 state.dongles[props.dongleId].crash.length > 0 ? state.dongles[props.dongleId].crash.map(buildContent) : <p> No drives </p>
                 :

@@ -4,11 +4,6 @@ import React from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import DrivesTable from './tabPane';
 
-
-
-
-
-
 function DeviceLastSeenMap() {
   return (
     <div style={{ height: "500px", width: 'calc(100%)' }}>
@@ -21,7 +16,7 @@ function DeviceLastSeenMap() {
                   lng: -0.142318
                 }}
                 defaultZoom={17}
-                options={{ 
+                options={{
                   styles: [
                     { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
                     { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -29,7 +24,7 @@ function DeviceLastSeenMap() {
                     {
                       featureType: "administrative.locality",
                       elementType: "labels.text.fill",
-                      stylers: [{ color: "#d59563" }], 
+                      stylers: [{ color: "#d59563" }],
                     },
                     {
                       featureType: "poi",
@@ -121,7 +116,7 @@ export default function SignIn(props) {
     }}>
 
       <Scrollbars autoHeightMin="100%" autoHeightMax="100%">
-        <Grid container style={{padding: 30}}>      
+        <Grid container style={{padding: 30}}>
           <Grid item xs={12}>
             <DeviceLastSeenMap />
           </Grid>

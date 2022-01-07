@@ -25,8 +25,6 @@ function process(state, action) {
 }
 
 
-
-
 export const Reducer = (state, action) => {
     console.log("input", state, action)
     switch (action.type) {
@@ -83,9 +81,6 @@ export const Reducer = (state, action) => {
 
         default:
             return state;
-
-
-      
     }
 };
 

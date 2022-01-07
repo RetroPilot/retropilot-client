@@ -81,9 +81,6 @@ export default function SignIn(props) {
             />*/}
             <Typography variant="body2" align={"left"} gutterBottom>Dongle: {device.dongle_id}</Typography>
 
-            
-
-           
             <div>
 
               {device.online ?
@@ -92,9 +89,7 @@ export default function SignIn(props) {
               }
 
               <Chip style={{ background: '#004d40', ...stylezz }} label="Active" size="small" variant="outlined" />
-             
             </div>
-            
           </Grid>
         </Grid>
       </ButtonBase>

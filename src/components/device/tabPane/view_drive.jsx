@@ -9,7 +9,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
-import React, { useContext,  useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { context as DeviceContext } from "./../../../context/devices";
 import * as deviceController from "./../../../controllers/devices";
 import Typography from "@mui/material/Typography"
@@ -23,11 +23,11 @@ export default function EnhancedTable(props) {
     const [state, setState] = useState({ loading: true, firstReqSent: false, segment: null, drive: null })
 
     if (state.drive === null) {
-        setState({...state, drive: props.drive})
+        setState({ ...state, drive: props.drive })
     }
 
     if (props.drive !== state.drive) {
-        setState({...state, loading: true, firstReqSent: false, segment: null, drive: props.drive})
+        setState({ ...state, loading: true, firstReqSent: false, segment: null, drive: props.drive })
     }
 
     const dongle_id = props.dongleId;
@@ -46,12 +46,12 @@ export default function EnhancedTable(props) {
             } else {
                 setState({ ...state, loading: false, firstReqSent: true, segment: res.data })
             }
-            
+
         })
 
     }
 
-// test
+    // test
 
 
 
@@ -72,14 +72,14 @@ export default function EnhancedTable(props) {
 
     try {
         metadata = JSON.parse(drive.metadata);
-        
+
         if (metadata['InitData']) {
             version = metadata['InitData']['Version'] || "Unknown";
             gitRemote = metadata['InitData']['GitRemote'] || "Unknown";
             gitBranch = metadata['InitData']['GitBranch'] || "Unknown";
             gitCommit = metadata['InitData']['GitCommit'] || "Unknown";
         }
-        
+
 
         if (metadata['CarParams']) {
             if (metadata['CarParams']['CarName'] !== undefined) vehicle += (metadata['CarParams']['CarName'].toUpperCase()) + " ";
@@ -151,25 +151,25 @@ export default function EnhancedTable(props) {
                             {
                                 directorySegments ? Object.keys(directorySegments).map((key, index) => {
 
-                                    
-                                        return Object.keys(directorySegments[key]).map((key1, index1) => (
-                                            <TableRow hover>
-                                                <TableCell >{key}</TableCell>
-                                                <TableCell >{directorySegments[key][key1].name}</TableCell>
-                                                <TableCell>{Math.round(directorySegments[key][key1].fileSize / 1024) + ' MiB'}</TableCell>
 
-                                                <TableCell>
-                                                    <Tooltip title="Open in new window">
-                                                        <IconButton size="small" onClick={() => window.open(directorySegments[key][key1].url, "_blank")}>
-                                                            <OpenInNewIcon fontSize="inherit" />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </TableCell>
+                                    return Object.keys(directorySegments[key]).map((key1, index1) => (
+                                        <TableRow hover>
+                                            <TableCell >{key}</TableCell>
+                                            <TableCell >{directorySegments[key][key1].name}</TableCell>
+                                            <TableCell>{Math.round(directorySegments[key][key1].fileSize / 1024) + ' MiB'}</TableCell>
+
+                                            <TableCell>
+                                                <Tooltip title="Open in new window">
+                                                    <IconButton size="small" onClick={() => window.open(directorySegments[key][key1].url, "_blank")}>
+                                                        <OpenInNewIcon fontSize="inherit" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </TableCell>
 
 
-                                            </TableRow>
-                                      ))
-                                    
+                                        </TableRow>
+                                    ))
+
 
                                 }) : null
                             }

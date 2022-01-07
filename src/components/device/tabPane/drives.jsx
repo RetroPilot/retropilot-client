@@ -18,10 +18,6 @@ import { context as SnackbarContext } from "./../../../context/toast";
 import * as deviceController from "./../../../controllers/devices";
 import * as helpers from "./../../../controllers/helpers"
 import ViewDrive from "./view_drive"
- 
-
-
- 
 
 export default function EnhancedTable(props) {
   const [deviceState, dispatch] = useContext(DeviceContext)
@@ -42,7 +38,7 @@ export default function EnhancedTable(props) {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <TableContainer>
-          <Table 
+          <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size={'small'}
