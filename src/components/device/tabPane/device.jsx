@@ -19,6 +19,7 @@ import * as helpers from "./../../../controllers/helpers"
 export default function SignIn(props) {
 
   const [state] = useContext(DeviceContext)
+  // eslint-disable-next-line no-unused-vars
   const [notifState, notifdispatch] = useContext(SnackbarContext)
 
   function pubKeyClipboard(newClip) {

@@ -37,7 +37,7 @@ function App() {
           mode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
         },
       }),
-    [true],
+    [],
   );
 
   return (

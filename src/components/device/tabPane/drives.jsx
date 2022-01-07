@@ -18,13 +18,14 @@ import { context as SnackbarContext } from "./../../../context/toast";
 import * as deviceController from "./../../../controllers/devices";
 import * as helpers from "./../../../controllers/helpers"
 import ViewDrive from "./view_drive"
+ 
 
 
-
-
+ 
 
 export default function EnhancedTable(props) {
   const [deviceState, dispatch] = useContext(DeviceContext)
+  // eslint-disable-next-line no-unused-vars
   const [ notifState, notifdispatch ] = useContext(SnackbarContext)
   const [state, setState] = useState({selectedSegment: null})
 
@@ -37,13 +38,13 @@ export default function EnhancedTable(props) {
       notifdispatch({type: "NEW_TOAST", msg: 'Failed to load drives'})
     })
 
-  }, []);
+  }, [dispatch, props, notifdispatch]);
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <TableContainer>
-          <Table
+          <Table 
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size={'small'}

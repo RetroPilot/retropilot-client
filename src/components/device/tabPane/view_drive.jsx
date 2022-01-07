@@ -1,7 +1,4 @@
-import DeleteIcon from '@mui/icons-material/Delete';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { Skeleton } from '@mui/material';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
@@ -12,19 +9,16 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext,  useState } from 'react';
 import { context as DeviceContext } from "./../../../context/devices";
-import { context as SnackbarContext } from "./../../../context/toast";
 import * as deviceController from "./../../../controllers/devices";
-import * as helpers from "./../../../controllers/helpers"
 import Typography from "@mui/material/Typography"
 
 
 
 
 export default function EnhancedTable(props) {
-    const [deviceState, dispatch] = useContext(DeviceContext)
-    const [notifState, notifdispatch] = useContext(SnackbarContext)
+    const [deviceState] = useContext(DeviceContext)
 
     const [state, setState] = useState({ loading: true, firstReqSent: false, segment: null, drive: null })
 
@@ -57,7 +51,7 @@ export default function EnhancedTable(props) {
 
     }
 
-
+// test
 
 
 
@@ -75,7 +69,6 @@ export default function EnhancedTable(props) {
     let gitCommit = "";
     let metadata = {};
 
-    let response = ""
 
     try {
         metadata = JSON.parse(drive.metadata);
@@ -103,7 +96,7 @@ export default function EnhancedTable(props) {
     if (directoryTree) {
         for (var i in directoryTree.children) {
             // skip any non-directory entries (for example m3u8 file in the drive directory)
-            if (directoryTree.children[i].type != 'directory') continue;
+            if (directoryTree.children[i].type !== 'directory') continue;
 
             var segment = directoryTree.children[i].name;
 
@@ -158,7 +151,7 @@ export default function EnhancedTable(props) {
                             {
                                 directorySegments ? Object.keys(directorySegments).map((key, index) => {
 
-                                    {
+                                    
                                         return Object.keys(directorySegments[key]).map((key1, index1) => (
                                             <TableRow hover>
                                                 <TableCell >{key}</TableCell>
@@ -175,8 +168,8 @@ export default function EnhancedTable(props) {
 
 
                                             </TableRow>
-                                        ))
-                                    }
+                                      ))
+                                    
 
                                 }) : null
                             }

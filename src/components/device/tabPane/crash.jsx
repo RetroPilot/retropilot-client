@@ -1,3 +1,5 @@
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+
 import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -23,7 +25,7 @@ import * as helpers from "./../../../controllers/helpers"
 
 function buildContent(row) {
   return (
-    <TableRow
+    <TableRow 
       hover
     >
 
@@ -69,14 +71,14 @@ function loading() {
 }
 
 export default function EnhancedTable(props) {
+  // eslint-disable-next-line no-unused-vars
   const [state, dispatch] = useContext(DeviceContext)
-
   useEffect(() => {
     deviceController.getCrashlogs(props.dongleId).then((res) => {
       dispatch({ type: "update_dongle_bootlogs", dongle_id: props.dongleId, bootlogs: res.data })
     })
 
-  }, []);
+  }, [dispatch, props]);
 
   console.log("drives", state.dongles[props.dongleId])
   console.log("drives", typeof state.dongles[props.dongleId])

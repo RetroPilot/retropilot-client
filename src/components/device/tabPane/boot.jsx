@@ -33,6 +33,7 @@ function loading() {
 
 export default function EnhancedTable(props) {
   const [state, dispatch] = useContext(DeviceContext)
+  // eslint-disable-next-line no-unused-vars
   const [ notifState, notifdispatch ] = useContext(SnackbarContext)
 
   useEffect(() => {
@@ -44,7 +45,7 @@ export default function EnhancedTable(props) {
       notifdispatch({type: "NEW_TOAST", msg: 'Failed to load bootlogs'})
     })
 
-  }, []);
+  }, [dispatch, notifdispatch, props]);
 
   return (
     <Box sx={{ width: '100%' }}>
