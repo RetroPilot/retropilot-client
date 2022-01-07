@@ -17,6 +17,11 @@ export async function getCrashlogs(dongleId) {
     return req.data
 }
 
+export async function getDriveSegments(dongleId, drive_identifier) {
+    const req = await axios.get(`http://localhost/retropilot/0/device/${dongleId}/drives/${drive_identifier}/segment`, {withCredentials: true});
+    return req.data
+}
+
 export async function getAllDevices() {
     const req = await axios.get(`http://localhost/retropilot/0/devices`, {withCredentials: true});
     const responseData = req.data

@@ -15,12 +15,10 @@ import Tooltip from '@mui/material/Tooltip';
 import React, { useContext, useEffect } from 'react';
 import { context as DeviceContext } from "./../../../context/devices";
 import * as deviceController from "./../../../controllers/devices";
+import * as helpers from "./../../../controllers/helpers"
 
 
 
-function formatDate(timestampMs) {
-  return new Date(timestampMs).toISOString().replace(/T/, ' ').replace(/\..+/, '');
-}
 
 
 function buildContent(row) {
@@ -30,7 +28,7 @@ function buildContent(row) {
     >
 
 
-      <TableCell >{formatDate(row.date)}</TableCell>
+      <TableCell >{helpers.formatDate(row.date)}</TableCell>
       <TableCell >{row.name}</TableCell>
       <TableCell >{Math.round(row.size / 1024) + ' MiB'}</TableCell>
 
@@ -71,11 +69,10 @@ function loading() {
 }
 
 export default function EnhancedTable(props) {
-  console.log("HELLO", props.dongleId)
   const [state, dispatch] = useContext(DeviceContext)
 
   useEffect(() => {
-    deviceController.getCrashlogs('53331425').then((res) => {
+    deviceController.getCrashlogs(props.dongleId).then((res) => {
       dispatch({ type: "update_dongle_bootlogs", dongle_id: props.dongleId, bootlogs: res.data })
     })
 

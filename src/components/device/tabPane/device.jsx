@@ -7,13 +7,9 @@ import Typography from '@mui/material/Typography';
 import React, { useContext } from 'react';
 import { context as DeviceContext } from "./../../../context/devices";
 import { context as SnackbarContext } from "./../../../context/toast";
+import * as helpers from "./../../../controllers/helpers"
 
 
-
-
-function formatDate(timestampMs) {
-  return new Date(timestampMs).toISOString().replace(/T/, ' ').replace(/\..+/, '');
-}
 
 
 
@@ -72,8 +68,8 @@ export default function SignIn(props) {
           <b>Type:</b> {dongle.device_type}<br></br>
           <b>Serial:</b> {dongle.serial}<br></br>
           <b>IMEI:</b> {dongle.imei}<br></br>
-          <b>Registered:</b> {formatDate(dongle.created)}<br></br>
-          <b>Last Ping:</b> {formatDate(dongle.last_ping)}<br></br>
+          <b>Registered:</b> {helpers.formatDate(dongle.created)}<br></br>
+          <b>Last Ping:</b> {helpers.formatDate(dongle.last_ping)}<br></br>
           <b>Public Key:</b> -----BEGIN PUBLIC KEY-----
           <Tooltip title="Copy public key">
             <IconButton onClick={() => pubKeyClipboard(dongle.public_key)}>

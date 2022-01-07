@@ -12,38 +12,21 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { context as DeviceContext } from "./../../../context/devices";
 import { context as SnackbarContext } from "./../../../context/toast";
 import * as deviceController from "./../../../controllers/devices";
+import * as helpers from "./../../../controllers/helpers"
+import ViewDrive from "./view_drive"
 
 
 
-function formatDate(timestampMs) {
-  return new Date(timestampMs).toISOString().replace(/T/, ' ').replace(/\..+/, '');
-}
-
-function formatDuration(durationSeconds) {
-  durationSeconds = Math.round(durationSeconds);
-  const secs = durationSeconds % 60;
-  let mins = Math.floor(durationSeconds / 60);
-  let hours = Math.floor(mins / 60);
-  mins = mins % 60;
-  const days = Math.floor(hours / 24);
-  hours = hours % 24;
-
-  let response = '';
-  if (days > 0) response += days + 'd ';
-  if (hours > 0 || days > 0) response += hours + 'h ';
-  if (hours > 0 || days > 0 || mins > 0) response += mins + 'm ';
-  response += secs + 's';
-  return response;
-}
 
 
 export default function EnhancedTable(props) {
-  const [state, dispatch] = useContext(DeviceContext)
+  const [deviceState, dispatch] = useContext(DeviceContext)
   const [ notifState, notifdispatch ] = useContext(SnackbarContext)
+  const [state, setState] = useState({selectedSegment: null})
 
   useEffect(() => {
     deviceController.getDrives(props.dongleId).then((res) => {
@@ -83,7 +66,7 @@ export default function EnhancedTable(props) {
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-              {state.dongles[props.dongleId].drives ? state.dongles[props.dongleId].drives.map((row) => {
+              {deviceState.dongles[props.dongleId].drives ? deviceState.dongles[props.dongleId].drives.map((row, index) => {
                 let metadata;
 
                 try {
@@ -92,6 +75,7 @@ export default function EnhancedTable(props) {
                 return (
                   <TableRow
                     hover
+                    onClick={()=>{state.selectedSegment === index ? setState({...state, selectedSegment: null }) : setState({...state, selectedSegment: index })}}
                   >
                     <TableCell
                       scope="row"
@@ -100,11 +84,11 @@ export default function EnhancedTable(props) {
                     <TableCell >{metadata.hasOwnProperty('CarParams1') ? metadata.CarParams['CarName'] : "Glorious Skoda"}</TableCell>
                     <TableCell >{metadata.hasOwnProperty('InitData1') ? metadata.InitData['Version'] : "Lemon boy"}</TableCell>
                     <TableCell >{Math.round(row.filesize / 1024) + ' MiB'}</TableCell>
-                    <TableCell >{formatDuration(row.duration)}</TableCell>
+                    <TableCell >{helpers.formatDuration(row.duration)}</TableCell>
                     <TableCell >{Math.round(row.distance_meters / 1000)}</TableCell>
                     <TableCell >{row.upload_complete.toString()}</TableCell>
                     <TableCell >{row.is_processed.toString()}</TableCell>
-                    <TableCell >{formatDate(row.drive_date)}</TableCell>
+                    <TableCell >{helpers.formatDate(row.drive_date)}</TableCell>
 
                     <TableCell>
                       <Tooltip title="Open in new window">
@@ -161,6 +145,8 @@ export default function EnhancedTable(props) {
           </Table>
         </TableContainer>
       </Paper>
+
+      {state.selectedSegment ? <ViewDrive dongleId={props.dongleId} drive={state.selectedSegment} /> : null }
     </Box>
   );
 }

@@ -16,14 +16,7 @@ import React, { useContext, useEffect } from 'react';
 import { context as DeviceContext } from "./../../../context/devices";
 import { context as SnackbarContext } from "./../../../context/toast";
 import * as deviceController from "./../../../controllers/devices";
-
-
-
-function formatDate(timestampMs) {
-  return new Date(timestampMs).toISOString().replace(/T/, ' ').replace(/\..+/, '');
-}
-
-
+import * as helpers from "./../../../controllers/helpers"
 
 
 function loading() {
@@ -42,11 +35,8 @@ export default function EnhancedTable(props) {
   const [state, dispatch] = useContext(DeviceContext)
   const [ notifState, notifdispatch ] = useContext(SnackbarContext)
 
-
-
-
   useEffect(() => {
-    deviceController.getBootlogs('53331425').then((res) => {
+    deviceController.getBootlogs(props.dongleId).then((res) => {
       setTimeout(() => {
         dispatch({ type: "update_dongle_bootlogs", dongle_id: props.dongleId, bootlogs: res.data })
       }, 1)
@@ -78,21 +68,15 @@ export default function EnhancedTable(props) {
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
               {state.dongles[props.dongleId].boot ? state.dongles[props.dongleId].boot.map((row) => {
-
       
                 return (
-                  <TableRow
-                    hover
-                  >
-
-
-                    <TableCell >{formatDate(row.date)}</TableCell>
+                  <TableRow hover>
+                    <TableCell >{helpers.formatDate(row.date)}</TableCell>
                     <TableCell >{row.name}</TableCell>
                     <TableCell >{Math.round(row.size / 1024) + ' MiB'}</TableCell>
-
-
                     <TableCell>
                     <Tooltip title="Open in new window">
+
                       <IconButton size="small" onClick={() => window.open(row.permalink, "_blank")}>
                         <OpenInNewIcon fontSize="inherit"/>
                       </IconButton>
@@ -114,23 +98,10 @@ export default function EnhancedTable(props) {
                   </TableRow>
                 )
 
-              }) : 
-
-                [1, 1, 1, 1, 1].map(loading)
-
-
-              }
-
-
-
-
-
-
-
+              }) : [1, 1, 1, 1, 1].map(loading) }
             </TableBody>
           </Table>
         </TableContainer>
-
       </Paper>
     </Box>
   );
