@@ -37,30 +37,28 @@ function App() {
           mode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
         },
       }),
-    [true],
+    [],
   );
 
   return (
     <div className="App">
 
-<ThemeProvider theme={theme}>
-      <CssBaseline />
-      
-      <UserProvider>
-        <DeviceStore>
-          <ToastStore>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
 
-        <GlobalSnack />
+        <UserProvider>
+          <DeviceStore>
+            <ToastStore>
 
-          {session ? <UserAdmin/> : <Login />}
+              <GlobalSnack />
 
-          </ToastStore>
-        </DeviceStore>
+              {session ? <UserAdmin /> : <Login />}
 
-      </UserProvider>
+            </ToastStore>
+          </DeviceStore>
+
+        </UserProvider>
       </ThemeProvider>
-
-
 
     </div>
   );

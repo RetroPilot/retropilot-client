@@ -33,18 +33,18 @@ function loading() {
 
 export default function EnhancedTable(props) {
   const [state, dispatch] = useContext(DeviceContext)
-  const [ notifState, notifdispatch ] = useContext(SnackbarContext)
+  const [, notifDispatch] = useContext(SnackbarContext)
 
   useEffect(() => {
     deviceController.getBootlogs(props.dongleId).then((res) => {
       setTimeout(() => {
         dispatch({ type: "update_dongle_bootlogs", dongle_id: props.dongleId, bootlogs: res.data })
       }, 1)
-    }).catch((err) => {
-      notifdispatch({type: "NEW_TOAST", msg: 'Failed to load bootlogs'})
+    }).catch(() => {
+      notifDispatch({type: "NEW_TOAST", msg: 'Failed to load bootlogs'})
     })
 
-  }, []);
+  }, [dispatch, notifDispatch, props.dongleId])
 
   return (
     <Box sx={{ width: '100%' }}>

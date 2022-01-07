@@ -19,17 +19,17 @@ import * as helpers from "./../../../controllers/helpers"
 export default function SignIn(props) {
 
   const [state] = useContext(DeviceContext)
-  const [notifState, notifdispatch] = useContext(SnackbarContext)
+  const [, notifDispatch] = useContext(SnackbarContext)
 
   function pubKeyClipboard(newClip) {
     navigator.clipboard.writeText(newClip).then(function () {
-      notifdispatch({
+      notifDispatch({
         type: "NEW_TOAST",
         open: true,
         msg: "Successfully copied to clipboard!"
       })
     }, function () {
-      notifdispatch({
+      notifDispatch({
         type: "NEW_TOAST",
         open: true,
         msg: "Failed to write to clipboard!"
