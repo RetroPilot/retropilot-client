@@ -77,8 +77,7 @@ export default function EnhancedTable(props) {
     deviceController.getCrashlogs(props.dongleId).then((res) => {
       dispatch({ type: "update_dongle_bootlogs", dongle_id: props.dongleId, bootlogs: res.data })
     })
-
-  }, [dispatch, props]);
+  }, [dispatch, props.dongleId]);
 
   console.log("drives", state.dongles[props.dongleId])
   console.log("drives", typeof state.dongles[props.dongleId])

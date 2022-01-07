@@ -25,8 +25,7 @@ import ViewDrive from "./view_drive"
 
 export default function EnhancedTable(props) {
   const [deviceState, dispatch] = useContext(DeviceContext)
-  // eslint-disable-next-line no-unused-vars
-  const [ notifState, notifdispatch ] = useContext(SnackbarContext)
+  const [, notifDispatch] = useContext(SnackbarContext)
   const [state, setState] = useState({selectedSegment: null})
 
   useEffect(() => {
@@ -34,11 +33,10 @@ export default function EnhancedTable(props) {
       setTimeout(() => {
         dispatch({ type: "update_dongle_drive", dongle_id: props.dongleId, drives: res.data })
       }, 1)
-    }).catch((err) => {
-      notifdispatch({type: "NEW_TOAST", msg: 'Failed to load drives'})
+    }).catch(() => {
+      notifDispatch({type: "NEW_TOAST", msg: 'Failed to load drives'})
     })
-
-  }, [dispatch, props, notifdispatch]);
+  }, [dispatch, notifDispatch, props.dongleId])
 
   return (
     <Box sx={{ width: '100%' }}>
