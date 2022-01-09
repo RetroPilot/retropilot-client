@@ -10,177 +10,178 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import React, { useContext, useState } from 'react';
-import { context as DeviceContext } from "./../../../context/devices";
-import * as deviceController from "./../../../controllers/devices";
-import Typography from "@mui/material/Typography"
-
-
-
+import Typography from '@mui/material/Typography';
+import { context as DeviceContext } from '../../../context/devices';
+import * as deviceController from '../../../controllers/devices';
 
 export default function EnhancedTable(props) {
-    const [deviceState] = useContext(DeviceContext)
+  const [deviceState] = useContext(DeviceContext);
 
-    const [state, setState] = useState({ loading: true, firstReqSent: false, segment: null, drive: null })
+  const [state, setState] = useState({
+    loading: true, firstReqSent: false, segment: null, drive: null,
+  });
 
-    if (state.drive === null) {
-        setState({ ...state, drive: props.drive })
+  if (state.drive === null) {
+    setState({ ...state, drive: props.drive });
+  }
+
+  if (props.drive !== state.drive) {
+    setState({
+      ...state, loading: true, firstReqSent: false, segment: null, drive: props.drive,
+    });
+  }
+
+  const dongle_id = props.dongleId;
+  const drive_id = props.drive;
+  const dongle = deviceState.dongles[dongle_id];
+  console.log('view drive', dongle);
+  console.log('drives', dongle.drives);
+  if (!dongle || !dongle.drives) return (<p>loading</p>);
+
+  if (state.segment === null) {
+    // TODO Make this not run multiple times
+    deviceController.getDriveSegments(dongle_id, dongle.drives[drive_id].identifier).then((res) => {
+      console.log('my res', res.data);
+      if (res.data === null) {
+        setState({
+          ...state, loading: false, firstReqSent: true, segment: [],
+        });
+      } else {
+        setState({
+          ...state, loading: false, firstReqSent: true, segment: res.data,
+        });
+      }
+    });
+  }
+
+  // test
+
+  const drive = dongle.drives[drive_id];
+
+  let vehicle = '';
+  let version = '';
+  let gitRemote = '';
+  let gitBranch = '';
+  let gitCommit = '';
+  let metadata = {};
+
+  try {
+    metadata = JSON.parse(drive.metadata);
+
+    if (metadata.InitData) {
+      version = metadata.InitData.Version || 'Unknown';
+      gitRemote = metadata.InitData.GitRemote || 'Unknown';
+      gitBranch = metadata.InitData.GitBranch || 'Unknown';
+      gitCommit = metadata.InitData.GitCommit || 'Unknown';
     }
 
-    if (props.drive !== state.drive) {
-        setState({ ...state, loading: true, firstReqSent: false, segment: null, drive: props.drive })
+    if (metadata.CarParams) {
+      if (metadata.CarParams.CarName !== undefined) vehicle += `${metadata.CarParams.CarName.toUpperCase()} `;
+      if (metadata.CarParams.CarFingerprint !== undefined) vehicle += (metadata.CarParams.CarFingerprint.toUpperCase());
+    }
+  } catch (exception) { console.log(exception); }
+
+  // const directoryTree = dirTree(config.storagePath + device.dongle_id + "/" + dongleIdHash + "/" + driveIdentifierHash + "/" + drive.identifier);
+  const directoryTree = state.segment;
+  const driveUrl = 'driveurl';
+  const directorySegments = {};
+
+  if (directoryTree) {
+    for (const i in directoryTree.children) {
+      // skip any non-directory entries (for example m3u8 file in the drive directory)
+      if (directoryTree.children[i].type !== 'directory') continue;
+
+      const segment = directoryTree.children[i].name;
+
+      const logSegment = {};
+      for (const c in directoryTree.children[i].children) {
+        logSegment[directoryTree.children[i].children[c].name] = {
+          url: `${driveUrl}/${segment}/${directoryTree.children[i].children[c].name}`,
+          name: directoryTree.children[i].children[c].name,
+          fileSize: directoryTree.children[i].children[c].size,
+
+        };
+      }
+
+      directorySegments[segment] = logSegment;
     }
 
-    const dongle_id = props.dongleId;
-    const drive_id = props.drive;
-    const dongle = deviceState.dongles[dongle_id];
-    console.log("view drive", dongle)
-    console.log("drives", dongle.drives)
-    if (!dongle || !dongle.drives) return (<p>loading</p>)
+    console.log('output is', directorySegments);
+  }
 
-    if (state.segment === null) {
-        // TODO Make this not run multiple times
-        deviceController.getDriveSegments(dongle_id, dongle.drives[drive_id].identifier).then((res) => {
-            console.log("my res", res.data)
-            if (res.data === null) {
-                setState({ ...state, loading: false, firstReqSent: true, segment: [] })
-            } else {
-                setState({ ...state, loading: false, firstReqSent: true, segment: res.data })
-            }
+  return (
+    <Box sx={{ width: '100%' }}>
+      <Paper sx={{ width: '100%', mb: 2, padding: '20px' }}>
 
-        })
+        <Typography variant="body1">
+          <b>Vehicle:</b>
+          {' '}
+          {vehicle}
+        </Typography>
+        <Typography variant="body1">
+          <b>Version:</b>
+          {' '}
+          {version}
+        </Typography>
+        <Typography variant="body1">
+          <b>gitRemote:</b>
+          {' '}
+          {gitRemote}
+        </Typography>
+        <Typography variant="body1">
+          <b>gitBranch:</b>
+          {' '}
+          {gitBranch}
+        </Typography>
+        <Typography variant="body1">
+          <b>gitCommit:</b>
+          {' '}
+          {gitCommit}
+        </Typography>
 
-    }
+        <Typography variant="body2"><b>Fingerprint: </b></Typography>
 
-    // test
+        <TableContainer>
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size="small"
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell>Segment ID</TableCell>
+                <TableCell>File</TableCell>
+                <TableCell>File size</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {
+                                directorySegments ? Object.keys(directorySegments).map((key, index) => Object.keys(directorySegments[key]).map((key1, index1) => (
+                                  <TableRow hover>
+                                    <TableCell>{key}</TableCell>
+                                    <TableCell>{directorySegments[key][key1].name}</TableCell>
+                                    <TableCell>{`${Math.round(directorySegments[key][key1].fileSize / 1024)} MiB`}</TableCell>
 
+                                    <TableCell>
+                                      <Tooltip title="Open in new window">
+                                        <IconButton size="small" onClick={() => window.open(directorySegments[key][key1].url, '_blank')}>
+                                          <OpenInNewIcon fontSize="inherit" />
+                                        </IconButton>
+                                      </Tooltip>
+                                    </TableCell>
 
-
-
-    const drive = dongle.drives[drive_id];
-
-
-
-
-
-    let vehicle = "";
-    let version = "";
-    let gitRemote = "";
-    let gitBranch = "";
-    let gitCommit = "";
-    let metadata = {};
-
-
-    try {
-        metadata = JSON.parse(drive.metadata);
-
-        if (metadata['InitData']) {
-            version = metadata['InitData']['Version'] || "Unknown";
-            gitRemote = metadata['InitData']['GitRemote'] || "Unknown";
-            gitBranch = metadata['InitData']['GitBranch'] || "Unknown";
-            gitCommit = metadata['InitData']['GitCommit'] || "Unknown";
-        }
-
-
-        if (metadata['CarParams']) {
-            if (metadata['CarParams']['CarName'] !== undefined) vehicle += (metadata['CarParams']['CarName'].toUpperCase()) + " ";
-            if (metadata['CarParams']['CarFingerprint'] !== undefined) vehicle += (metadata['CarParams']['CarFingerprint'].toUpperCase())
-
-        }
-    } catch (exception) { console.log(exception) }
-
-    //const directoryTree = dirTree(config.storagePath + device.dongle_id + "/" + dongleIdHash + "/" + driveIdentifierHash + "/" + drive.identifier);
-    const directoryTree = state.segment;
-    const driveUrl = "driveurl"
-    var directorySegments = {};
-
-    if (directoryTree) {
-        for (var i in directoryTree.children) {
-            // skip any non-directory entries (for example m3u8 file in the drive directory)
-            if (directoryTree.children[i].type !== 'directory') continue;
-
-            var segment = directoryTree.children[i].name;
-
-            let logSegment = {}
-            for (var c in directoryTree.children[i].children) {
-                logSegment[directoryTree.children[i].children[c].name] = {
-                    url: `${driveUrl}/${segment}/${directoryTree.children[i].children[c].name}`,
-                    name: directoryTree.children[i].children[c].name,
-                    fileSize: directoryTree.children[i].children[c].size
-
-                }
-            }
-
-            directorySegments[segment] = logSegment;
-        }
-
-        console.log("output is", directorySegments)
-    }
-
-
-
-
-    return (
-        <Box sx={{ width: '100%' }}>
-            <Paper sx={{ width: '100%', mb: 2, padding: '20px' }}>
-
-                <Typography variant="body1"><b>Vehicle:</b> {vehicle}</Typography>
-                <Typography variant="body1"><b>Version:</b> {version}</Typography>
-                <Typography variant="body1"><b>gitRemote:</b> {gitRemote}</Typography>
-                <Typography variant="body1"><b>gitBranch:</b> {gitBranch}</Typography>
-                <Typography variant="body1"><b>gitCommit:</b> {gitCommit}</Typography>
-
-                <Typography variant="body2"><b>Fingerprint: </b></Typography>
-
-
-
-                <TableContainer>
-                    <Table
-                        sx={{ minWidth: 750 }}
-                        aria-labelledby="tableTitle"
-                        size={'small'}
-                    >
-                        <TableHead>
-                            <TableRow>
-                                <TableCell >Segment ID</TableCell>
-                                <TableCell >File</TableCell>
-                                <TableCell >File size</TableCell>
-                                <TableCell >Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {
-                                directorySegments ? Object.keys(directorySegments).map((key, index) => {
-
-
-                                    return Object.keys(directorySegments[key]).map((key1, index1) => (
-                                        <TableRow hover>
-                                            <TableCell >{key}</TableCell>
-                                            <TableCell >{directorySegments[key][key1].name}</TableCell>
-                                            <TableCell>{Math.round(directorySegments[key][key1].fileSize / 1024) + ' MiB'}</TableCell>
-
-                                            <TableCell>
-                                                <Tooltip title="Open in new window">
-                                                    <IconButton size="small" onClick={() => window.open(directorySegments[key][key1].url, "_blank")}>
-                                                        <OpenInNewIcon fontSize="inherit" />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </TableCell>
-
-
-                                        </TableRow>
-                                    ))
-
-
-                                }) : null
+                                  </TableRow>
+                                ))) : null
                             }
 
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-            </Paper>
-        </Box >
-    );
+      </Paper>
+    </Box>
+  );
 }
 
 /*
@@ -194,8 +195,6 @@ var dongleIdHash = crypto.createHmac('sha256', config.applicationSalt).update(de
     if (drive.is_processed) {
         cabanaUrl = config.cabanaUrl + '?retropilotIdentifier=' + device.dongle_id + '|' + dongleIdHash + '|' + drive.identifier + '|' + driveIdentifierHash + '&retropilotHost=' + encodeURIComponent(config.baseUrl) + '&demo=1"';
     }
-
-
 
     var response = `<html style="font-family: monospace">
                 <head>
@@ -290,14 +289,12 @@ var dongleIdHash = crypto.createHmac('sha256', config.applicationSalt).update(de
                     <tr><th>segment</th><th>qcamera</th><th>qlog</th><th>fcamera</th><th>rlog</th><th>dcamera</th><th>processed</th><th>stalled</th></tr>
                 `;
 
-
     var directorySegments = {};
     for (var i in directoryTree.children) {
         // skip any non-directory entries (for example m3u8 file in the drive directory)
         if (directoryTree.children[i].type != 'directory') continue;
 
         var segment = directoryTree.children[i].name;
-
 
         var qcamera = '--';
         var fcamera = '--';

@@ -1,16 +1,16 @@
 export const reducer = (state, action) => {
   switch (action.type) {
-    case "sign_out":
+    case 'sign_out':
 
       return {
         ...state,
-        active: !state.active
-      }
+        active: !state.active,
+      };
 
     default:
-      return state
+      return state;
   }
-}
+};
 
 export const initialState = {
   signedIn: false,
@@ -19,4 +19,4 @@ export const initialState = {
     username: null,
     JWT: null,
   },
-}
+};

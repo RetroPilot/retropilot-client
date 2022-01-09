@@ -2,17 +2,16 @@ import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import React from 'react';
-import BootLogsTable from "./boot";
+import BootLogsTable from './boot';
 import Console from './console';
-import CrashLogsTable from "./crash";
+import CrashLogsTable from './crash';
 import DeviceInfo from './device';
-import DrivesLogTable from "./drives";
-
-
-
+import DrivesLogTable from './drives';
 
 function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+  const {
+    children, value, index, ...other
+  } = props;
 
   return (
     <div
@@ -31,10 +30,7 @@ function TabPanel(props) {
   );
 }
 
-
-
 export default function SignIn(props) {
-
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -45,8 +41,13 @@ export default function SignIn(props) {
     <div className="wrapper">
 
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" variant="scrollable"
-          scrollButtons="auto">
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="basic tabs example"
+          variant="scrollable"
+          scrollButtons="auto"
+        >
           <Tab label="Device" />
           <Tab label="Drives" />
           <Tab label="Crashes" />
@@ -72,10 +73,7 @@ export default function SignIn(props) {
 
       {
 
-
       }
     </div>
   );
 }
-
-

@@ -13,26 +13,26 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import React, { useContext, useEffect, useState } from 'react';
-import { context as DeviceContext } from "./../../../context/devices";
-import { context as SnackbarContext } from "./../../../context/toast";
-import * as deviceController from "./../../../controllers/devices";
-import * as helpers from "./../../../controllers/helpers"
-import ViewDrive from "./view_drive"
+import { context as DeviceContext } from '../../../context/devices';
+import { context as SnackbarContext } from '../../../context/toast';
+import * as deviceController from '../../../controllers/devices';
+import * as helpers from '../../../controllers/helpers';
+import ViewDrive from './view_drive';
 
 export default function EnhancedTable(props) {
-  const [deviceState, dispatch] = useContext(DeviceContext)
-  const [, notifDispatch] = useContext(SnackbarContext)
-  const [state, setState] = useState({selectedSegment: null})
+  const [deviceState, dispatch] = useContext(DeviceContext);
+  const [, notifDispatch] = useContext(SnackbarContext);
+  const [state, setState] = useState({ selectedSegment: null });
 
   useEffect(() => {
     deviceController.getDrives(props.dongleId).then((res) => {
       setTimeout(() => {
-        dispatch({ type: "update_dongle_drive", dongle_id: props.dongleId, drives: res.data })
-      }, 1)
+        dispatch({ type: 'update_dongle_drive', dongle_id: props.dongleId, drives: res.data });
+      }, 1);
     }).catch(() => {
-      notifDispatch({type: "NEW_TOAST", msg: 'Failed to load drives'})
-    })
-  }, [dispatch, notifDispatch, props.dongleId])
+      notifDispatch({ type: 'NEW_TOAST', msg: 'Failed to load drives' });
+    });
+  }, [dispatch, notifDispatch, props.dongleId]);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -41,7 +41,7 @@ export default function EnhancedTable(props) {
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={'small'}
+            size="small"
           >
             <TableHead>
               <TableRow>
@@ -65,25 +65,27 @@ export default function EnhancedTable(props) {
                 let metadata;
 
                 try {
-                  metadata = JSON.parse(row.metadata)
-                } catch (err) { metadata = {} }
+                  metadata = JSON.parse(row.metadata);
+                } catch (err) { metadata = {}; }
                 return (
                   <TableRow
                     hover
-                    onClick={()=>{state.selectedSegment === index ? setState({...state, selectedSegment: null }) : setState({...state, selectedSegment: index })}}
+                    onClick={() => { state.selectedSegment === index ? setState({ ...state, selectedSegment: null }) : setState({ ...state, selectedSegment: index }); }}
                   >
                     <TableCell
                       scope="row"
-                    >{row.identifier}</TableCell>
+                    >
+                      {row.identifier}
+                    </TableCell>
 
-                    <TableCell >{metadata.hasOwnProperty('CarParams1') ? metadata.CarParams['CarName'] : "Glorious Skoda"}</TableCell>
-                    <TableCell >{metadata.hasOwnProperty('InitData1') ? metadata.InitData['Version'] : "Lemon boy"}</TableCell>
-                    <TableCell >{Math.round(row.filesize / 1024) + ' MiB'}</TableCell>
-                    <TableCell >{helpers.formatDuration(row.duration)}</TableCell>
-                    <TableCell >{Math.round(row.distance_meters / 1000)}</TableCell>
-                    <TableCell >{row.upload_complete.toString()}</TableCell>
-                    <TableCell >{row.is_processed.toString()}</TableCell>
-                    <TableCell >{helpers.formatDate(row.drive_date)}</TableCell>
+                    <TableCell>{metadata.hasOwnProperty('CarParams1') ? metadata.CarParams.CarName : 'Glorious Skoda'}</TableCell>
+                    <TableCell>{metadata.hasOwnProperty('InitData1') ? metadata.InitData.Version : 'Lemon boy'}</TableCell>
+                    <TableCell>{`${Math.round(row.filesize / 1024)} MiB`}</TableCell>
+                    <TableCell>{helpers.formatDuration(row.duration)}</TableCell>
+                    <TableCell>{Math.round(row.distance_meters / 1000)}</TableCell>
+                    <TableCell>{row.upload_complete.toString()}</TableCell>
+                    <TableCell>{row.is_processed.toString()}</TableCell>
+                    <TableCell>{helpers.formatDate(row.drive_date)}</TableCell>
 
                     <TableCell>
                       <Tooltip title="Open in new window">
@@ -106,13 +108,11 @@ export default function EnhancedTable(props) {
 
                     </TableCell>
                   </TableRow>
-                )
+                );
+              })
 
-              }) :
-
-                [1, 1, 1, 1, 1].map((v) => (
-                  <TableRow
-                  >
+                : [1, 1, 1, 1, 1].map((v) => (
+                  <TableRow>
                     <TableCell padding="checkbox">
                       <Skeleton animation="wave" />
                     </TableCell>
@@ -122,19 +122,16 @@ export default function EnhancedTable(props) {
                       <Skeleton animation="wave" />
                     </TableCell>
 
-                    <TableCell ><Skeleton animation="wave" /></TableCell>
-                    <TableCell ><Skeleton animation="wave" /></TableCell>
-                    <TableCell ><Skeleton animation="wave" /></TableCell>
-                    <TableCell ><Skeleton animation="wave" /></TableCell>
-                    <TableCell ><Skeleton animation="wave" /></TableCell>
-                    <TableCell ><Skeleton animation="wave" /></TableCell>
-                    <TableCell ><Skeleton animation="wave" /></TableCell>
-                    <TableCell ><Skeleton animation="wave" /></TableCell>
+                    <TableCell><Skeleton animation="wave" /></TableCell>
+                    <TableCell><Skeleton animation="wave" /></TableCell>
+                    <TableCell><Skeleton animation="wave" /></TableCell>
+                    <TableCell><Skeleton animation="wave" /></TableCell>
+                    <TableCell><Skeleton animation="wave" /></TableCell>
+                    <TableCell><Skeleton animation="wave" /></TableCell>
+                    <TableCell><Skeleton animation="wave" /></TableCell>
+                    <TableCell><Skeleton animation="wave" /></TableCell>
                   </TableRow>
-                ))
-
-
-              }
+                ))}
 
             </TableBody>
           </Table>
@@ -145,4 +142,3 @@ export default function EnhancedTable(props) {
     </Box>
   );
 }
-

@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, { useState, useContext } from 'react';
 import Avatar from '@mui/material/Avatar';
 import LoadingButton from '@mui/lab/LoadingButton';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,20 +14,21 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { UserContext } from "./context/users"
-const theme = createTheme(); 
+import { UserContext } from './context/users';
+
+const theme = createTheme();
 
 export default function SignIn() {
-  const [ state, dispatch ] = useContext(UserContext)
-  
+  const [state, dispatch] = useContext(UserContext);
 
   return (
     <ThemeProvider theme={theme}>
-      {console.log("testing", state)}
-      <p> {JSON.stringify(state)}</p>
-    
+      {console.log('testing', state)}
+      <p>
+        {' '}
+        {JSON.stringify(state)}
+      </p>
+
     </ThemeProvider>
   );
 }
-
-

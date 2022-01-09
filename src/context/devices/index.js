@@ -1,131 +1,125 @@
-import React, { createContext, useEffect, useReducer } from "react";
-import * as deviceController from "./../../controllers/devices";
+import React, { createContext, useEffect, useReducer } from 'react';
+import * as deviceController from '../../controllers/devices';
 
 function process(state, action) {
-    if (action.type !== "ADD_DATA") { return state }
+  if (action.type !== 'ADD_DATA') { return state; }
 
-    switch (action.data.command) {
-
-        case "dongle_status":
-            return {
-                ...state,
-                dongles: {
-                    ...state.dongles,
-                    [action.data.data.dongle_id]: {
-                        ...state.dongles[action.data.data.dongle_id],
-                        online: action.data.data.online,
-                        last_seen: action.data.data.time,
-                        dongle_id: action.data.data.dongle_id
-                    }
-                }
-            }
-        default:
-            return state;
-    }
+  switch (action.data.command) {
+    case 'dongle_status':
+      return {
+        ...state,
+        dongles: {
+          ...state.dongles,
+          [action.data.data.dongle_id]: {
+            ...state.dongles[action.data.data.dongle_id],
+            online: action.data.data.online,
+            last_seen: action.data.data.time,
+            dongle_id: action.data.data.dongle_id,
+          },
+        },
+      };
+    default:
+      return state;
+  }
 }
 
-
 export const Reducer = (state, action) => {
-    console.log("input", state, action)
-    switch (action.type) {
-        case 'ADD_DATA':
-            return process(state, action);
-        case "fetch_all_dongles":
-            console.log("fetch", action)
-            return {
-                ...state,
-                dongles: action.data
-            }
+  console.log('input', state, action);
+  switch (action.type) {
+    case 'ADD_DATA':
+      return process(state, action);
+    case 'fetch_all_dongles':
+      console.log('fetch', action);
+      return {
+        ...state,
+        dongles: action.data,
+      };
 
-        case "update_dongle_drive":
-            return {
-                ...state,
-                dongles: {
-                    ...state.dongles,
-                    [action.dongle_id]: {
-                        ...state.dongles[action.dongle_id],
-                        drives: action.drives
-                    }
-                }
-            }
+    case 'update_dongle_drive':
+      return {
+        ...state,
+        dongles: {
+          ...state.dongles,
+          [action.dongle_id]: {
+            ...state.dongles[action.dongle_id],
+            drives: action.drives,
+          },
+        },
+      };
 
-        case "update_dongle_bootlogs":
-            return {
-                ...state,
-                dongles: {
-                    ...state.dongles,
-                    [action.dongle_id]: {
-                        ...state.dongles[action.dongle_id],
-                        boot: action.bootlogs
-                    }
-                }
-            }
+    case 'update_dongle_bootlogs':
+      return {
+        ...state,
+        dongles: {
+          ...state.dongles,
+          [action.dongle_id]: {
+            ...state.dongles[action.dongle_id],
+            boot: action.bootlogs,
+          },
+        },
+      };
 
-        case "update_dongle_crashlogs":
-            return {
-                ...state,
-                dongles: {
-                    ...state.dongles,
-                    [action.dongle_id]: {
-                        ...state.dongles[action.dongle_id],
-                        crash: action.crashlogs
-                    }
-                }
-            }
+    case 'update_dongle_crashlogs':
+      return {
+        ...state,
+        dongles: {
+          ...state.dongles,
+          [action.dongle_id]: {
+            ...state.dongles[action.dongle_id],
+            crash: action.crashlogs,
+          },
+        },
+      };
 
-        case "user_authentication":
-            return {
-                ...state,
-                user: action.user
-            }
+    case 'user_authentication':
+      return {
+        ...state,
+        user: action.user,
+      };
 
-        default:
-            return state;
-    }
+    default:
+      return state;
+  }
 };
-
-
-
 
 const initialState = {
-    dongles: {}
+  dongles: {},
 };
 
-const Store = ({ children }) => {
-    console.log("STORE HAS BEEN RERENDERED")
-    const [state, dispatch] = useReducer(Reducer, initialState);
+function Store({ children }) {
+  console.log('STORE HAS BEEN RERENDERED');
+  const [state, dispatch] = useReducer(Reducer, initialState);
 
-    useEffect(() => {
-        const ws = new WebSocket('ws://localhost:81');
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:81');
 
-        ws.onmessage = ({ data }) => {
-            data = JSON.parse(data)
-            console.log("Message")
-            if (data.id) {
-                dispatch({ type: "ADD_DATA", id: data.id, data: data })
-            }
-        };
+    ws.onmessage = ({ data }) => {
+      data = JSON.parse(data);
+      console.log('Message');
+      if (data.id) {
+        dispatch({ type: 'ADD_DATA', id: data.id, data });
+      }
+    };
 
-        deviceController.getAllDevices().then((devices) => {
-            console.log("store", devices)
+    deviceController.getAllDevices().then((devices) => {
+      console.log('store', devices);
 
-            dispatch({ type: "fetch_all_dongles", data: devices })
-        })
+      dispatch({ type: 'fetch_all_dongles', data: devices });
+    });
 
-        return () => {
-            try {
-                ws.close();
-            } catch (e) { }
-        };
-    }, []);
+    return () => {
+      try {
+        ws.close();
+      } catch (e) { }
+    };
+  }, []);
 
-
-    return (
-        <context.Provider value={[state, dispatch]}>
-            {children}
-        </context.Provider>
-    )
-};
+  return (
+    <context.Provider value={[state, dispatch]}>
+      {children}
+    </context.Provider>
+  );
+}
 
 export const context = createContext(initialState);
 export default Store;

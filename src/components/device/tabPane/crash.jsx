@@ -1,4 +1,4 @@
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+// eslint-disable-next-line react-hooks/exhaustive-deps
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -15,13 +15,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import React, { useContext, useEffect } from 'react';
-import { context as DeviceContext } from "./../../../context/devices";
-import * as deviceController from "./../../../controllers/devices";
-import * as helpers from "./../../../controllers/helpers"
-
-
-
-
+import { context as DeviceContext } from '../../../context/devices';
+import * as deviceController from '../../../controllers/devices';
+import * as helpers from '../../../controllers/helpers';
 
 function buildContent(row) {
   return (
@@ -29,15 +25,13 @@ function buildContent(row) {
       hover
     >
 
-
-      <TableCell >{helpers.formatDate(row.date)}</TableCell>
-      <TableCell >{row.name}</TableCell>
-      <TableCell >{Math.round(row.size / 1024) + ' MiB'}</TableCell>
-
+      <TableCell>{helpers.formatDate(row.date)}</TableCell>
+      <TableCell>{row.name}</TableCell>
+      <TableCell>{`${Math.round(row.size / 1024)} MiB`}</TableCell>
 
       <TableCell>
         <Tooltip title="Open in new window">
-          <IconButton size="small" onClick={() => window.open(row.permalink, "_blank")}>
+          <IconButton size="small" onClick={() => window.open(row.permalink, '_blank')}>
             <OpenInNewIcon fontSize="inherit" />
           </IconButton>
         </Tooltip>
@@ -56,31 +50,31 @@ function buildContent(row) {
 
       </TableCell>
     </TableRow>
-  )
+  );
 }
 
 function loading() {
   return (
     <TableRow>
-      <TableCell ><Skeleton animation="wave" /></TableCell>
-      <TableCell ><Skeleton animation="wave" /></TableCell>
-      <TableCell ><Skeleton animation="wave" /></TableCell>
-      <TableCell ><Skeleton animation="wave" /></TableCell>
+      <TableCell><Skeleton animation="wave" /></TableCell>
+      <TableCell><Skeleton animation="wave" /></TableCell>
+      <TableCell><Skeleton animation="wave" /></TableCell>
+      <TableCell><Skeleton animation="wave" /></TableCell>
     </TableRow>
-  )
+  );
 }
 
 export default function EnhancedTable(props) {
   // eslint-disable-next-line no-unused-vars
-  const [state, dispatch] = useContext(DeviceContext)
+  const [state, dispatch] = useContext(DeviceContext);
   useEffect(() => {
     deviceController.getCrashlogs(props.dongleId).then((res) => {
-      dispatch({ type: "update_dongle_bootlogs", dongle_id: props.dongleId, bootlogs: res.data })
-    })
+      dispatch({ type: 'update_dongle_bootlogs', dongle_id: props.dongleId, bootlogs: res.data });
+    });
   }, [dispatch, props.dongleId]);
 
-  console.log("drives", state.dongles[props.dongleId])
-  console.log("drives", typeof state.dongles[props.dongleId])
+  console.log('drives', state.dongles[props.dongleId]);
+  console.log('drives', typeof state.dongles[props.dongleId]);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -89,23 +83,21 @@ export default function EnhancedTable(props) {
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={'small'}
+            size="small"
           >
             <TableHead>
               <TableRow>
-                <TableCell >Date</TableCell>
-                <TableCell >File</TableCell>
-                <TableCell >File size</TableCell>
-                <TableCell >Actions</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>File</TableCell>
+                <TableCell>File size</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
-              {state.dongles[props.dongleId].crash ?
-                state.dongles[props.dongleId].crash.length > 0 ? state.dongles[props.dongleId].crash.map(buildContent) : <p> No drives </p>
-                :
-                [1, 1, 1, 1, 1].map(loading)
-              }
+              {state.dongles[props.dongleId].crash
+                ? state.dongles[props.dongleId].crash.length > 0 ? state.dongles[props.dongleId].crash.map(buildContent) : <p> No drives </p>
+                : [1, 1, 1, 1, 1].map(loading)}
 
             </TableBody>
           </Table>
@@ -115,4 +107,3 @@ export default function EnhancedTable(props) {
     </Box>
   );
 }
-

@@ -4,13 +4,13 @@ const Reducer = (state, action) => {
       return {
         ...state,
         open: action.open,
-        msg: action.message
+        msg: action.message,
       };
     case 'CLOSE_TOAST':
       return {
         ...state,
-        open: false
-      }
+        open: false,
+      };
 
     default:
       return state;

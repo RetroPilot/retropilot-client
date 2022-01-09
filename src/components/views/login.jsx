@@ -7,14 +7,14 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React, { useContext, useState } from 'react';
-import { UserContext } from "./../../context/users";
+import { UserContext } from '../../context/users';
 
 export default function SignIn() {
-  const [loading, setLoading] = useState(false)
-  const [state, dispatch] = useContext(UserContext)
-  console.log("component", state)
+  const [loading, setLoading] = useState(false);
+  const [state, dispatch] = useContext(UserContext);
+  console.log('component', state);
   const handleSubmit = (event) => {
-    dispatch({ type: "toggle_button" })
+    dispatch({ type: 'toggle_button' });
 
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -24,7 +24,7 @@ export default function SignIn() {
       password: data.get('password'),
     });
 
-    setLoading(true)
+    setLoading(true);
   };
 
   return (
@@ -41,12 +41,9 @@ export default function SignIn() {
               alignItems: 'center',
             }}
             style={{
-              padding: '15px'
+              padding: '15px',
             }}
           >
-
-
-
 
             <Typography component="h1" variant="h5" align="left">
               Sign in
@@ -85,20 +82,15 @@ export default function SignIn() {
               </LoadingButton>
 
               <Link href="#" variant="body2">
-                {"New Here or Forgotten password?"}
+                New Here or Forgotten password?
               </Link>
             </Box>
           </Paper>
 
-
-
         </Grid>
-
 
       </Grid>
 
     </Container>
   );
 }
-
-
