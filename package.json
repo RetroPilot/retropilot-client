@@ -1,7 +1,8 @@
 {
   "name": "retropilot-client",
   "version": "0.1.0",
-  "private": true,
+  "description": "replacement for comma.ai connect. frontend for retropilot-server.",
+  "license": "MIT",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
