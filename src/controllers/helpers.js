@@ -3,9 +3,9 @@ export function formatDate(timestampMs) {
 }
 
 export function formatDuration(durationSeconds) {
-  durationSeconds = Math.round(durationSeconds);
-  const secs = durationSeconds % 60;
-  let mins = Math.floor(durationSeconds / 60);
+  const durationSecondsRound = Math.round(durationSeconds);
+  const secs = durationSecondsRound % 60;
+  let mins = Math.floor(durationSecondsRound / 60);
   let hours = Math.floor(mins / 60);
   mins %= 60;
   const days = Math.floor(hours / 24);

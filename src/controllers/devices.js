@@ -15,8 +15,8 @@ export async function getCrashlogs(dongleId) {
   return req.data;
 }
 
-export async function getDriveSegments(dongleId, drive_identifier) {
-  const req = await axios.get(`http://localhost/retropilot/0/device/${dongleId}/drives/${drive_identifier}/segment`, { withCredentials: true });
+export async function getDriveSegments(dongleId, driveIdentifier) {
+  const req = await axios.get(`http://localhost/retropilot/0/device/${dongleId}/drives/${driveIdentifier}/segment`, { withCredentials: true });
   return req.data;
 }
 
@@ -24,21 +24,20 @@ export async function getAllDevices() {
   const req = await axios.get('http://localhost/retropilot/0/devices', { withCredentials: true });
   const responseData = req.data;
 
-  let dongles = {};
-
-  if (responseData.success === true) {
-    responseData.data.map((object) => dongles = {
-      ...dongles,
-      [object.dongle_id]: {
-        ...object,
-        online: false,
-        // Show when last connected to api instead Athena by default
-        last_seen: object.last_ping,
-      },
-    });
-
-    return dongles;
+  if (!responseData.success) {
+    return null;
   }
 
-  return null;
+  // TODO: use array reduce
+  const dongles = {};
+  responseData.data.forEach((object) => {
+    dongles[object.id] = {
+      ...object,
+      online: false,
+      // Show when last connected to api instead Athena by default
+      last_seen: object.last_ping,
+    };
+  });
+
+  return dongles;
 }
