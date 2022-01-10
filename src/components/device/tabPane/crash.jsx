@@ -15,20 +15,21 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-import { ACTIONS, DevicesContext } from '../../../context/devices';
+import { ACTIONS as DevicesActions, DevicesContext } from '../../../context/devices';
+import { ACTIONS as ToastActions, ToastContext } from '../../../context/toast';
 import * as deviceController from '../../../controllers/devices';
 import * as helpers from '../../../controllers/helpers';
 
-function buildContent(row) {
+function buildRow(crash) {
   return (
     <TableRow hover>
-      <TableCell>{helpers.formatDate(row.date)}</TableCell>
-      <TableCell>{row.name}</TableCell>
-      <TableCell>{`${Math.round(row.size / 1024)} MiB`}</TableCell>
+      <TableCell>{helpers.formatDate(crash.date)}</TableCell>
+      <TableCell>{crash.name}</TableCell>
+      <TableCell>{`${Math.round(crash.size / 1024)} MiB`}</TableCell>
 
       <TableCell>
         <Tooltip title="Open in new window">
-          <IconButton size="small" onClick={() => window.open(row.permalink, '_blank')}>
+          <IconButton size="small" onClick={() => window.open(crash.permalink, '_blank')}>
             <OpenInNewIcon fontSize="inherit" />
           </IconButton>
         </Tooltip>
@@ -60,23 +61,39 @@ function loading() {
   );
 }
 
+function buildBody(dongle) {
+  if (!dongle.crash) {
+    return [1, 1, 1, 1, 1].map(loading);
+  }
+  if (dongle.crash.length === 0) {
+    return <p>No drives</p>;
+  }
+  return dongle.crash.map(buildRow);
+}
+
 function CrashLogsTable(props) {
   const { dongleId } = props;
 
-  // eslint-disable-next-line no-unused-vars
-  const [state, dispatch] = useContext(DevicesContext);
+  const [state, devicesDispatch] = useContext(DevicesContext);
+  const [, toastDispatch] = useContext(ToastContext);
   useEffect(() => {
     deviceController.getCrashlogs(dongleId).then((res) => {
-      dispatch({
-        type: ACTIONS.UPDATE_DONGLE_BOOTLOGS,
+      devicesDispatch({
+        type: DevicesActions.UPDATE_DONGLE_CRASHLOGS,
         dongle_id: dongleId,
-        bootlogs: res.data,
+        crashlogs: res.data,
+      });
+    }).catch(() => {
+      toastDispatch({
+        type: ToastActions.NEW_TOAST,
+        msg: 'Failed to load crashlogs',
       });
     });
-  }, [dispatch, dongleId]);
+  }, [devicesDispatch, toastDispatch, dongleId]);
 
-  console.log('drives', state.dongles[dongleId]);
-  console.log('drives', typeof state.dongles[dongleId]);
+  const dongle = state.dongles[dongleId];
+  console.log('drives', dongle);
+  console.log('drives', typeof dongle);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -97,15 +114,10 @@ function CrashLogsTable(props) {
             </TableHead>
 
             <TableBody>
-              {state.dongles[dongleId].crash
-                ? (state.dongles[dongleId].crash.length > 0
-                  ? state.dongles[dongleId].crash.map(buildContent)
-                  : <p> No drives </p>)
-                : [1, 1, 1, 1, 1].map(loading)}
+              {buildBody(dongle)}
             </TableBody>
           </Table>
         </TableContainer>
-
       </Paper>
     </Box>
   );

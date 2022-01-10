@@ -15,8 +15,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-import { DevicesContext } from '../../../context/devices';
-import { ToastContext } from '../../../context/toast';
+import { ACTIONS as DevicesActions, DevicesContext } from '../../../context/devices';
+import { ACTIONS as ToastActions, ToastContext } from '../../../context/toast';
 import * as deviceController from '../../../controllers/devices';
 import * as helpers from '../../../controllers/helpers';
 
@@ -34,23 +34,26 @@ function loading() {
 function BootLogsTable(props) {
   const { dongleId } = props;
 
-  const [state, dispatch] = useContext(DevicesContext);
-  const [, notifDispatch] = useContext(ToastContext);
+  const [state, devicesDispatch] = useContext(DevicesContext);
+  const [, toastDispatch] = useContext(ToastContext);
 
   useEffect(() => {
     deviceController.getBootlogs(dongleId).then((res) => {
       // TODO: why set timeout 1?
       setTimeout(() => {
-        dispatch({
-          type: 'update_dongle_bootlogs',
+        devicesDispatch({
+          type: DevicesActions.UPDATE_DONGLE_BOOTLOGS,
           dongle_id: dongleId,
           bootlogs: res.data,
         });
       }, 1);
     }).catch(() => {
-      notifDispatch({ type: 'NEW_TOAST', msg: 'Failed to load bootlogs' });
+      toastDispatch({
+        type: ToastActions.NEW_TOAST,
+        msg: 'Failed to load bootlogs',
+      });
     });
-  }, [dispatch, notifDispatch, dongleId]);
+  }, [devicesDispatch, toastDispatch, dongleId]);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -74,6 +77,7 @@ function BootLogsTable(props) {
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
               {state.dongles[dongleId].boot ? state.dongles[dongleId].boot.map((row) => (
+                // TODO: extract to function
                 <TableRow hover>
                   <TableCell>{helpers.formatDate(row.date)}</TableCell>
                   <TableCell>{row.name}</TableCell>

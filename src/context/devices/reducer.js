@@ -37,7 +37,7 @@ function reducer(state, action) {
         dongles: action.data,
       };
 
-    case ACTIONS.UPDATE_DONGLE_DRIVE:
+    case ACTIONS.UPDATE_DONGLE_DRIVES:
       return {
         ...state,
         dongles: {

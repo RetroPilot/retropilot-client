@@ -15,8 +15,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-import { DevicesContext } from '../../../context/devices';
-import { ToastContext } from '../../../context/toast';
+import { ACTIONS as DevicesActions, DevicesContext } from '../../../context/devices';
+import { ACTIONS as ToastActions, ToastContext } from '../../../context/toast';
 import * as deviceController from '../../../controllers/devices';
 import * as helpers from '../../../controllers/helpers';
 import ViewDrive from './view_drive';
@@ -24,19 +24,28 @@ import ViewDrive from './view_drive';
 function DrivesLogTable(props) {
   const { dongleId } = props;
 
-  const [devicesState, dispatch] = useContext(DevicesContext);
-  const [, notifDispatch] = useContext(ToastContext);
+  const [devicesState, devicesDispatch] = useContext(DevicesContext);
+  const [, toastDispatch] = useContext(ToastContext);
   const [state, setState] = useState({ selectedSegment: null });
 
   useEffect(() => {
     deviceController.getDrives(dongleId).then((res) => {
       setTimeout(() => {
-        dispatch({ type: 'update_dongle_drive', dongle_id: dongleId, drives: res.data });
+        devicesDispatch({
+          type: DevicesActions.UPDATE_DONGLE_DRIVES,
+          dongle_id: dongleId,
+          drives: res.data,
+        });
       }, 1);
     }).catch(() => {
-      notifDispatch({ type: 'NEW_TOAST', msg: 'Failed to load drives' });
+      toastDispatch({
+        type: ToastActions.NEW_TOAST,
+        msg: 'Failed to load drives',
+      });
     });
-  }, [dispatch, notifDispatch, dongleId]);
+  }, [devicesDispatch, toastDispatch, dongleId]);
+
+  const dongle = devicesState.dongles[dongleId];
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -65,8 +74,9 @@ function DrivesLogTable(props) {
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-              {devicesState.dongles[dongleId].drives
-                ? devicesState.dongles[dongleId].drives.map((row, index) => {
+              {dongle.drives
+                ? dongle.drives.map((row, index) => {
+                  // TODO: extract to function
                   let metadata;
 
                   try {
