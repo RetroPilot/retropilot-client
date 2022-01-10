@@ -68,24 +68,23 @@ function ViewDrive(props) {
   let gitRemote = '';
   let gitBranch = '';
   let gitCommit = '';
-  let metadata = {};
 
   try {
-    metadata = JSON.parse(drive.metadata);
+    const { InitData, CarParams } = JSON.parse(drive.metadata) || {};
 
-    if (metadata.InitData) {
-      version = metadata.InitData.Version || 'Unknown';
-      gitRemote = metadata.InitData.GitRemote || 'Unknown';
-      gitBranch = metadata.InitData.GitBranch || 'Unknown';
-      gitCommit = metadata.InitData.GitCommit || 'Unknown';
+    if (InitData) {
+      version = InitData.Version || 'Unknown';
+      gitRemote = InitData.GitRemote || 'Unknown';
+      gitBranch = InitData.GitBranch || 'Unknown';
+      gitCommit = InitData.GitCommit || 'Unknown';
     }
 
-    if (metadata.CarParams) {
-      if (metadata.CarParams.CarName !== undefined) {
-        vehicle += `${metadata.CarParams.CarName.toUpperCase()} `;
+    if (CarParams) {
+      if (CarParams.CarName !== undefined) {
+        vehicle += `${CarParams.CarName.toUpperCase()} `;
       }
-      if (metadata.CarParams.CarFingerprint !== undefined) {
-        vehicle += (metadata.CarParams.CarFingerprint.toUpperCase());
+      if (CarParams.CarFingerprint !== undefined) {
+        vehicle += (CarParams.CarFingerprint.toUpperCase());
       }
     }
   } catch (exception) { console.log(exception); }
@@ -96,6 +95,16 @@ function ViewDrive(props) {
   const directorySegments = {};
 
   if (directoryTree) {
+    console.log('directoryTree:', directoryTree);
+
+    // directoryTree.children.reduce((directorySegments, segmentDir) => {
+    //   directorySegments[segmentDir.]
+    // }, directorySegments);
+    // directoryTree.children.forEach((file) => {
+    //
+    // })
+
+    // eslint-disable-next-line no-restricted-syntax
     for (const i in directoryTree.children) {
       // skip any non-directory entries (for example m3u8 file in the drive directory)
       if (directoryTree.children[i].type !== 'directory') continue;
@@ -103,7 +112,11 @@ function ViewDrive(props) {
       const segment = directoryTree.children[i].name;
 
       const logSegment = {};
+      // eslint-disable-next-line no-restricted-syntax
       for (const c in directoryTree.children[i].children) {
+        // skip any directory entries
+        if (directoryTree.children[i].children[c].type !== 'file') continue;
+
         logSegment[directoryTree.children[i].children[c].name] = {
           url: `${driveUrl}/${segment}/${directoryTree.children[i].children[c].name}`,
           name: directoryTree.children[i].children[c].name,

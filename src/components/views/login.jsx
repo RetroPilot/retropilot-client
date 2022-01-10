@@ -14,6 +14,7 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const [state, dispatch] = useContext(UserContext);
   console.log('component', state);
+
   const handleSubmit = (event) => {
     dispatch({ type: 'toggle_button' });
 
@@ -30,11 +31,8 @@ export default function SignIn() {
 
   return (
     <Container component="main" maxWidth="xs" style={{ height: '100vh' }}>
-
       <Grid container direction="row" justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
-
         <Grid item xs={12}>
-
           <Paper
             sx={{
               display: 'flex',
@@ -82,16 +80,14 @@ export default function SignIn() {
                 Sign In
               </LoadingButton>
 
-              <Link href="#" variant="body2">
+              <Link href="#Forgot" variant="body2">
                 New Here or Forgotten password?
               </Link>
             </Box>
+
           </Paper>
-
         </Grid>
-
       </Grid>
-
     </Container>
   );
 }
