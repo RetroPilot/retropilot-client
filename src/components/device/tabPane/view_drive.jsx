@@ -1,3 +1,5 @@
+import React, { useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -9,38 +11,41 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
-import React, { useContext, useState } from 'react';
 import Typography from '@mui/material/Typography';
-import { context as DeviceContext } from '../../../context/devices';
+
+import { DevicesContext } from '../../../context/devices';
 import * as deviceController from '../../../controllers/devices';
 
-export default function EnhancedTable(props) {
-  const [deviceState] = useContext(DeviceContext);
+function ViewDrive(props) {
+  const {
+    dongleId,
+    drive: driveId,
+  } = props;
+
+  const [deviceState] = useContext(DevicesContext);
 
   const [state, setState] = useState({
-    loading: true, firstReqSent: false, segment: null, drive: null,
+    loading: true, firstReqSent: false, segment: null, driveId: null,
   });
 
   if (state.drive === null) {
-    setState({ ...state, drive: props.drive });
+    setState({ ...state, driveId });
   }
 
-  if (props.drive !== state.drive) {
+  if (driveId !== state.drive) {
     setState({
-      ...state, loading: true, firstReqSent: false, segment: null, drive: props.drive,
+      ...state, loading: true, firstReqSent: false, segment: null, driveId,
     });
   }
 
-  const dongle_id = props.dongleId;
-  const drive_id = props.drive;
-  const dongle = deviceState.dongles[dongle_id];
+  const dongle = deviceState.dongles[dongleId];
   console.log('view drive', dongle);
   console.log('drives', dongle.drives);
   if (!dongle || !dongle.drives) return (<p>loading</p>);
 
   if (state.segment === null) {
     // TODO Make this not run multiple times
-    deviceController.getDriveSegments(dongle_id, dongle.drives[drive_id].identifier).then((res) => {
+    deviceController.getDriveSegments(dongleId, dongle.drives[driveId].identifier).then((res) => {
       console.log('my res', res.data);
       if (res.data === null) {
         setState({
@@ -56,7 +61,7 @@ export default function EnhancedTable(props) {
 
   // test
 
-  const drive = dongle.drives[drive_id];
+  const drive = dongle.drives[driveId];
 
   let vehicle = '';
   let version = '';
@@ -76,8 +81,12 @@ export default function EnhancedTable(props) {
     }
 
     if (metadata.CarParams) {
-      if (metadata.CarParams.CarName !== undefined) vehicle += `${metadata.CarParams.CarName.toUpperCase()} `;
-      if (metadata.CarParams.CarFingerprint !== undefined) vehicle += (metadata.CarParams.CarFingerprint.toUpperCase());
+      if (metadata.CarParams.CarName !== undefined) {
+        vehicle += `${metadata.CarParams.CarName.toUpperCase()} `;
+      }
+      if (metadata.CarParams.CarFingerprint !== undefined) {
+        vehicle += (metadata.CarParams.CarFingerprint.toUpperCase());
+      }
     }
   } catch (exception) { console.log(exception); }
 
@@ -99,7 +108,6 @@ export default function EnhancedTable(props) {
           url: `${driveUrl}/${segment}/${directoryTree.children[i].children[c].name}`,
           name: directoryTree.children[i].children[c].name,
           fileSize: directoryTree.children[i].children[c].size,
-
         };
       }
 
@@ -112,7 +120,6 @@ export default function EnhancedTable(props) {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2, padding: '20px' }}>
-
         <Typography variant="body1">
           <b>Vehicle:</b>
           {' '}
@@ -157,32 +164,40 @@ export default function EnhancedTable(props) {
             </TableHead>
             <TableBody>
               {
-                                directorySegments ? Object.keys(directorySegments).map((key, index) => Object.keys(directorySegments[key]).map((key1, index1) => (
-                                  <TableRow hover>
-                                    <TableCell>{key}</TableCell>
-                                    <TableCell>{directorySegments[key][key1].name}</TableCell>
-                                    <TableCell>{`${Math.round(directorySegments[key][key1].fileSize / 1024)} MiB`}</TableCell>
+                directorySegments
+                  ? Object.keys(directorySegments)
+                    .map((key) => Object.keys(directorySegments[key])
+                      .map((key1) => (
+                        <TableRow hover>
+                          <TableCell>{key}</TableCell>
+                          <TableCell>{directorySegments[key][key1].name}</TableCell>
+                          <TableCell>{`${Math.round(directorySegments[key][key1].fileSize / 1024)} MiB`}</TableCell>
 
-                                    <TableCell>
-                                      <Tooltip title="Open in new window">
-                                        <IconButton size="small" onClick={() => window.open(directorySegments[key][key1].url, '_blank')}>
-                                          <OpenInNewIcon fontSize="inherit" />
-                                        </IconButton>
-                                      </Tooltip>
-                                    </TableCell>
-
-                                  </TableRow>
-                                ))) : null
-                            }
-
+                          <TableCell>
+                            <Tooltip title="Open in new window">
+                              <IconButton size="small" onClick={() => window.open(directorySegments[key][key1].url, '_blank')}>
+                                <OpenInNewIcon fontSize="inherit" />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      )))
+                  : null
+              }
             </TableBody>
           </Table>
         </TableContainer>
-
       </Paper>
     </Box>
   );
 }
+
+ViewDrive.propTypes = {
+  dongleId: PropTypes.string.isRequired,
+  drive: PropTypes.string.isRequired,
+};
+
+export default ViewDrive;
 
 /*
 

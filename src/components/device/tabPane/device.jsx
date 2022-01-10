@@ -1,37 +1,43 @@
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Skeleton from '@mui/material/Skeleton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import React, { useContext } from 'react';
-import { context as DeviceContext } from '../../../context/devices';
-import { context as SnackbarContext } from '../../../context/toast';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+
+import { DevicesContext } from '../../../context/devices';
+import { ACTIONS as ToastActions, ToastContext } from '../../../context/toast';
 import * as helpers from '../../../controllers/helpers';
 
-export default function SignIn(props) {
-  const [state] = useContext(DeviceContext);
-  const [, notifDispatch] = useContext(SnackbarContext);
+function DeviceInfo(props) {
+  const { dongleId } = props;
+
+  const [devicesState] = useContext(DevicesContext);
+  const [, toastDispatch] = useContext(ToastContext);
+
+  if (!devicesState.dongles[dongleId]) {
+    return (<p>no</p>);
+  }
 
   function pubKeyClipboard(newClip) {
     navigator.clipboard.writeText(newClip).then(() => {
-      notifDispatch({
-        type: 'NEW_TOAST',
+      toastDispatch({
+        type: ToastActions.NEW_TOAST,
         open: true,
         msg: 'Successfully copied to clipboard!',
       });
     }, () => {
-      notifDispatch({
-        type: 'NEW_TOAST',
+      toastDispatch({
+        type: ToastActions.NEW_TOAST,
         open: true,
         msg: 'Failed to write to clipboard!',
       });
     });
   }
 
-  if (!state.dongles[props.dongleId]) { return (<p>no</p>); }
-  const dongle = state.dongles[props.dongleId];
-
+  const dongle = devicesState.dongles[dongleId];
   if (!dongle) {
     return (
       <Grid container>
@@ -40,15 +46,13 @@ export default function SignIn(props) {
           <Skeleton animation="wave" />
           <Skeleton animation="wave" />
         </Grid>
-
       </Grid>
-
     );
   }
 
   return (
     <div className="wrapper" style={{ marginTop: '10px' }}>
-      <Typography variant="body1">{state.dongles[props.dongleId].dongle_id}</Typography>
+      <Typography variant="body1">{devicesState.dongles[dongleId].dongle_id}</Typography>
 
       <Grid container>
         <Grid item xs={3}>
@@ -97,3 +101,9 @@ export default function SignIn(props) {
     </div>
   );
 }
+
+DeviceInfo.propTypes = {
+  dongleId: PropTypes.string.isRequired,
+};
+
+export default DeviceInfo;

@@ -1,12 +1,13 @@
-import Snackbar from '@mui/material/Snackbar';
 import React, { useContext } from 'react';
-import { context as DeviceContext } from '../../context/toast';
+import Snackbar from '@mui/material/Snackbar';
 
-export default function Toast(props) {
-  const [state, dispatch] = useContext(DeviceContext);
+import { ACTIONS, ToastContext } from '../../context/toast';
+
+function Toast() {
+  const [state, dispatch] = useContext(ToastContext);
 
   const handleClose = () => {
-    dispatch({ type: 'CLOSE_TOAST' });
+    dispatch({ type: ACTIONS.CLOSE_TOAST });
   };
 
   return (
@@ -19,3 +20,5 @@ export default function Toast(props) {
     />
   );
 }
+
+export default Toast;

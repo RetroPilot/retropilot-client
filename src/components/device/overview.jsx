@@ -1,9 +1,10 @@
+import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import React, { useEffect } from 'react';
 
 const stylezz = {
   margin: '0px 2px 0px 0px',
@@ -22,9 +23,10 @@ function timeSince(date) {
   return 'just now';
 }
 
-export default function SignIn(props) {
-  const [state, setState] = React.useState({ count: 0, last_seen: 0 });
+function DeviceOverview(props) {
   const { device } = props;
+
+  const [state, setState] = React.useState({ count: 0, last_seen: 0 });
 
   // Reloads component to update X time ago
   // TODO prevent X time ago from being refreshed when the device has been
@@ -72,7 +74,6 @@ export default function SignIn(props) {
             </Typography>
 
             <div>
-
               {device.online
                 ? <Chip style={{ background: '#004d40', ...stylezz }} label="Online" size="small" variant="outlined" />
                 : <Chip style={{ background: '#b71c1c', ...stylezz }} label={`Offline ${deviceLastSeen}`} size="small" variant="outlined" />}
@@ -84,6 +85,15 @@ export default function SignIn(props) {
       </ButtonBase>
       <Divider />
     </div>
-
   );
 }
+
+DeviceOverview.propTypes = {
+  device: PropTypes.shape({
+    dongle_id: PropTypes.string.isRequired,
+    last_seen: PropTypes.string.isRequired,
+    online: PropTypes.bool.isRequired,
+  }).isRequired,
+};
+
+export default DeviceOverview;

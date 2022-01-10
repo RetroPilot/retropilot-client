@@ -1,7 +1,8 @@
-export const reducer = (state, action) => {
-  switch (action.type) {
-    case 'sign_out':
+import ACTIONS from './actions';
 
+function reducer(state, action) {
+  switch (action.type) {
+    case ACTIONS.SIGN_OUT:
       return {
         ...state,
         active: !state.active,
@@ -10,13 +11,6 @@ export const reducer = (state, action) => {
     default:
       return state;
   }
-};
+}
 
-export const initialState = {
-  signedIn: false,
-  user: {
-    id: null,
-    username: null,
-    JWT: null,
-  },
-};
+export default reducer;

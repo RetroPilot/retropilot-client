@@ -54,31 +54,26 @@ function RichContent(props) {
         </AccordionDetails>
       </Accordion>
     )
-  } 
-} 
+  }
+}
 */
 
 
-export default function Console() {
-
-
+function ConsoleTable() {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-
         {/*
           Object.keys(state).map(key => {
             console.log(key, state[key])
             return (<RichContent content={state[key]} key1={key} />)
           }
-            
+
           )
         */}
-
-
- 
       </Paper>
     </Box>
   );
 }
 
+export default ConsoleTable;

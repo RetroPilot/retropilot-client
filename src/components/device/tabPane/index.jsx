@@ -1,16 +1,20 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import React from 'react';
+
 import BootLogsTable from './boot';
-import Console from './console';
+import ConsoleTable from './console';
 import CrashLogsTable from './crash';
 import DeviceInfo from './device';
 import DrivesLogTable from './drives';
 
 function TabPanel(props) {
   const {
-    children, value, index, ...other
+    children,
+    value,
+    index,
   } = props;
 
   return (
@@ -19,7 +23,6 @@ function TabPanel(props) {
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      {...other}
     >
       {value === index && (
         <div style={{ padding: '5px' }}>
@@ -30,7 +33,15 @@ function TabPanel(props) {
   );
 }
 
-export default function SignIn(props) {
+TabPanel.propTypes = {
+  children: PropTypes.node.isRequired,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function TabPane(props) {
+  const { dongleId } = props;
+
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -39,7 +50,6 @@ export default function SignIn(props) {
 
   return (
     <div className="wrapper">
-
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
           value={value}
@@ -56,24 +66,26 @@ export default function SignIn(props) {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        <DeviceInfo dongleId={props.dongleId} />
+        <DeviceInfo dongleId={dongleId} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <DrivesLogTable dongleId={props.dongleId} />
+        <DrivesLogTable dongleId={dongleId} />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <CrashLogsTable dongleId={props.dongleId} />
+        <CrashLogsTable dongleId={dongleId} />
       </TabPanel>
       <TabPanel value={value} index={3}>
-        <BootLogsTable dongleId={props.dongleId} />
+        <BootLogsTable dongleId={dongleId} />
       </TabPanel>
       <TabPanel value={value} index={4}>
-        <Console dongleId={props.dongleId} />
+        <ConsoleTable dongleId={dongleId} />
       </TabPanel>
-
-      {
-
-      }
     </div>
   );
 }
+
+TabPane.propTypes = {
+  dongleId: PropTypes.string.isRequired,
+};
+
+export default TabPane;

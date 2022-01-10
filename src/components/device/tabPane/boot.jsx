@@ -1,6 +1,5 @@
-import DeleteIcon from '@mui/icons-material/Delete';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import React, { useContext, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Skeleton } from '@mui/material';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -12,9 +11,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
-import React, { useContext, useEffect } from 'react';
-import { context as DeviceContext } from '../../../context/devices';
-import { context as SnackbarContext } from '../../../context/toast';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+
+import { DevicesContext } from '../../../context/devices';
+import { ToastContext } from '../../../context/toast';
 import * as deviceController from '../../../controllers/devices';
 import * as helpers from '../../../controllers/helpers';
 
@@ -29,20 +31,26 @@ function loading() {
   );
 }
 
-export default function EnhancedTable(props) {
-  const [state, dispatch] = useContext(DeviceContext);
+function BootLogsTable(props) {
+  const { dongleId } = props;
 
-  const [, notifDispatch] = useContext(SnackbarContext);
+  const [state, dispatch] = useContext(DevicesContext);
+  const [, notifDispatch] = useContext(ToastContext);
 
   useEffect(() => {
-    deviceController.getBootlogs(props.dongleId).then((res) => {
+    deviceController.getBootlogs(dongleId).then((res) => {
+      // TODO: why set timeout 1?
       setTimeout(() => {
-        dispatch({ type: 'update_dongle_bootlogs', dongle_id: props.dongleId, bootlogs: res.data });
+        dispatch({
+          type: 'update_dongle_bootlogs',
+          dongle_id: dongleId,
+          bootlogs: res.data,
+        });
       }, 1);
     }).catch(() => {
       notifDispatch({ type: 'NEW_TOAST', msg: 'Failed to load bootlogs' });
     });
-  }, [dispatch, notifDispatch, props.dongleId]);
+  }, [dispatch, notifDispatch, dongleId]);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -65,14 +73,13 @@ export default function EnhancedTable(props) {
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-              {state.dongles[props.dongleId].boot ? state.dongles[props.dongleId].boot.map((row) => (
+              {state.dongles[dongleId].boot ? state.dongles[dongleId].boot.map((row) => (
                 <TableRow hover>
                   <TableCell>{helpers.formatDate(row.date)}</TableCell>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{`${Math.round(row.size / 1024)} MiB`}</TableCell>
                   <TableCell>
                     <Tooltip title="Open in new window">
-
                       <IconButton size="small" onClick={() => window.open(row.permalink, '_blank')}>
                         <OpenInNewIcon fontSize="inherit" />
                       </IconButton>
@@ -100,3 +107,9 @@ export default function EnhancedTable(props) {
     </Box>
   );
 }
+
+BootLogsTable.propTypes = {
+  dongleId: PropTypes.string.isRequired,
+};
+
+export default BootLogsTable;

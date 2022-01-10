@@ -1,125 +1,68 @@
-import React, { createContext, useEffect, useReducer } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+} from 'react';
+import PropTypes from 'prop-types';
+
 import * as deviceController from '../../controllers/devices';
 
-function process(state, action) {
-  if (action.type !== 'ADD_DATA') { return state; }
-
-  switch (action.data.command) {
-    case 'dongle_status':
-      return {
-        ...state,
-        dongles: {
-          ...state.dongles,
-          [action.data.data.dongle_id]: {
-            ...state.dongles[action.data.data.dongle_id],
-            online: action.data.data.online,
-            last_seen: action.data.data.time,
-            dongle_id: action.data.data.dongle_id,
-          },
-        },
-      };
-    default:
-      return state;
-  }
-}
-
-export const Reducer = (state, action) => {
-  console.log('input', state, action);
-  switch (action.type) {
-    case 'ADD_DATA':
-      return process(state, action);
-    case 'fetch_all_dongles':
-      console.log('fetch', action);
-      return {
-        ...state,
-        dongles: action.data,
-      };
-
-    case 'update_dongle_drive':
-      return {
-        ...state,
-        dongles: {
-          ...state.dongles,
-          [action.dongle_id]: {
-            ...state.dongles[action.dongle_id],
-            drives: action.drives,
-          },
-        },
-      };
-
-    case 'update_dongle_bootlogs':
-      return {
-        ...state,
-        dongles: {
-          ...state.dongles,
-          [action.dongle_id]: {
-            ...state.dongles[action.dongle_id],
-            boot: action.bootlogs,
-          },
-        },
-      };
-
-    case 'update_dongle_crashlogs':
-      return {
-        ...state,
-        dongles: {
-          ...state.dongles,
-          [action.dongle_id]: {
-            ...state.dongles[action.dongle_id],
-            crash: action.crashlogs,
-          },
-        },
-      };
-
-    case 'user_authentication':
-      return {
-        ...state,
-        user: action.user,
-      };
-
-    default:
-      return state;
-  }
-};
+import ACTIONS from './actions';
+import reducer from './reducer';
 
 const initialState = {
   dongles: {},
 };
 
-function Store({ children }) {
-  console.log('STORE HAS BEEN RERENDERED');
-  const [state, dispatch] = useReducer(Reducer, initialState);
+const DevicesContext = createContext(initialState);
+
+function DevicesProvider({ children }) {
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:81');
 
     ws.onmessage = ({ data }) => {
-      data = JSON.parse(data);
-      console.log('Message');
-      if (data.id) {
-        dispatch({ type: 'ADD_DATA', id: data.id, data });
+      const payload = JSON.parse(data);
+      console.log('devices onmessage', payload);
+
+      if (!payload.id) {
+        dispatch({ type: ACTIONS.ADD_DATA, data: payload });
       }
     };
 
     deviceController.getAllDevices().then((devices) => {
-      console.log('store', devices);
+      console.log('devices store', devices);
 
-      dispatch({ type: 'fetch_all_dongles', data: devices });
+      dispatch({ type: ACTIONS.FETCH_ALL_DONGLES, data: devices });
     });
 
     return () => {
+      // Clean up the websocket
       try {
         ws.close();
-      } catch (e) { }
+      } catch (e) {
+        // do nothing
+      }
     };
   }, []);
 
+  const contextValue = useMemo(() => ([state, dispatch]), [state, dispatch]);
+
   return (
-    <context.Provider value={[state, dispatch]}>
-      {children}
-    </context.Provider>
+    <DevicesContext.Provider value={contextValue}>
+      { children }
+    </DevicesContext.Provider>
   );
 }
 
-export const context = createContext(initialState);
-export default Store;
+DevicesProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+export default DevicesProvider;
+export {
+  ACTIONS,
+  DevicesContext,
+};

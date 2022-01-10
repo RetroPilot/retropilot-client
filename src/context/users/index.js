@@ -1,17 +1,38 @@
-import React from 'react';
-import { reducer, initialState } from './reducer';
+import React, { createContext, useMemo, useReducer } from 'react';
+import PropTypes from 'prop-types';
 
-export const UserContext = React.createContext({
-  state: initialState,
-  dispatch: () => null,
-});
+import ACTIONS from './actions';
+import reducer from './reducer';
 
-export function UserProvider({ children }) {
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+const initialState = {
+  signedIn: false,
+  user: {
+    id: null,
+    username: null,
+    JWT: null,
+  },
+};
+
+const UserContext = createContext(initialState);
+
+function UserProvider({ children }) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const contextValue = useMemo(() => ([state, dispatch]), [state, dispatch]);
 
   return (
-    <UserContext.Provider value={[state, dispatch]}>
+    <UserContext.Provider value={contextValue}>
       { children }
     </UserContext.Provider>
   );
 }
+
+UserProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+export default UserProvider;
+export {
+  ACTIONS,
+  UserContext,
+};

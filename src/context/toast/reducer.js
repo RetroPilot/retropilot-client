@@ -1,12 +1,14 @@
-const Reducer = (state, action) => {
+import ACTIONS from './actions';
+
+function reducer(state, action) {
   switch (action.type) {
-    case 'NEW_TOAST':
+    case ACTIONS.NEW_TOAST:
       return {
         ...state,
         open: action.open,
         msg: action.message,
       };
-    case 'CLOSE_TOAST':
+    case ACTIONS.CLOSE_TOAST:
       return {
         ...state,
         open: false,
@@ -15,6 +17,6 @@ const Reducer = (state, action) => {
     default:
       return state;
   }
-};
+}
 
-export default Reducer;
+export default reducer;

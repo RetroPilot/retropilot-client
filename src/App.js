@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import Login from './components/views/login';
 import UserAdmin from './components/views/useradmin';
 import GlobalSnack from './components/widgets/globalSnack';
-import DeviceStore from './context/devices';
-import ToastStore from './context/toast';
-import { UserProvider } from './context/users';
+import DevicesProvider from './context/devices';
+import ToastProvider from './context/toast';
+import UserProvider from './context/users';
 import * as authenticationController from './controllers/authentication';
 
 // Connection opened
@@ -34,16 +34,15 @@ function App() {
         <CssBaseline />
 
         <UserProvider>
-          <DeviceStore>
-            <ToastStore>
+          <DevicesProvider>
+            <ToastProvider>
 
               <GlobalSnack />
 
               {session ? <UserAdmin /> : <Login />}
 
-            </ToastStore>
-          </DeviceStore>
-
+            </ToastProvider>
+          </DevicesProvider>
         </UserProvider>
       </ThemeProvider>
 

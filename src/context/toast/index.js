@@ -1,19 +1,34 @@
-import React, { createContext, useReducer } from 'react';
-import Reducer from './reducer';
+import React, { createContext, useMemo, useReducer } from 'react';
+import PropTypes from 'prop-types';
+
+import ACTIONS from './actions';
+import reducer from './reducer';
 
 const initialState = {
   open: false,
   message: null,
 };
 
-function Store({ children }) {
-  const [state, dispatch] = useReducer(Reducer, initialState);
+const ToastContext = createContext(initialState);
+
+function ToastProvider({ children }) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const contextValue = useMemo(() => ([state, dispatch]), [state, dispatch]);
+
   return (
-    <context.Provider value={[state, dispatch]}>
+    <ToastContext.Provider value={contextValue}>
       {children}
-    </context.Provider>
+    </ToastContext.Provider>
   );
 }
 
-export const context = createContext(initialState);
-export default Store;
+ToastProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+export default ToastProvider;
+export {
+  ACTIONS,
+  ToastContext,
+};
