@@ -1,6 +1,6 @@
 # retropilot-client
 
-![Build and test React app CI](https://github.com/RetroPilot/retropilot-client/actions/workflows/build_test_react.yml/badge.svg)
+![Build and test CI](https://github.com/RetroPilot/retropilot-client/actions/workflows/build.yml/badge.svg)
 
 React client for [RetroPilot server](https://github.com/RetroPilot/retropilot-server)
 
