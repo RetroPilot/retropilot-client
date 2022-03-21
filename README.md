@@ -1,13 +1,13 @@
 # retropilot-client
-React client for Retropilot
 
+![Build and test React app CI](https://github.com/RetroPilot/retropilot-client/actions/workflows/build_test_react.yml/badge.svg)
 
-Ties into https://github.com/retropilot/retropilot-server/ to provide a react frontend
+React client for [RetroPilot server](https://github.com/RetroPilot/retropilot-server)
 
 ## Environment Variables
 
 The app configuration (see `src/config.js`) is loaded from environment variables. A different
-different environment can be configured for development (`npm run start`), testing (`npm test`) and
+environment can be configured for development (`npm run start`), testing (`npm test`) and
 production (`npm run build`).
 
 To override the environment variables, create a `.env.local` file. You can also override the
