@@ -1,6 +1,7 @@
+import React, { useState } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import React, { useState } from 'react';
+
 import Login from './components/views/login';
 import UserAdmin from './components/views/useradmin';
 import GlobalSnack from './components/widgets/globalSnack';
@@ -9,13 +10,12 @@ import ToastProvider from './context/toast';
 import UserProvider from './context/users';
 import * as authenticationController from './controllers/authentication';
 
-// Connection opened
-
 function App() {
-  const [session, setSession] = useState(false);
+  const [isAuthenticated, setAuthenticated] = useState(false);
 
-  authenticationController.getSession().then((res) => {
-    setSession(res.data.authenticated);
+  authenticationController.getSession().then((session) => {
+    const { authenticated } = session.data;
+    setAuthenticated(authenticated);
   });
 
   const theme = React.useMemo(
@@ -39,7 +39,7 @@ function App() {
 
               <GlobalSnack />
 
-              {session ? <UserAdmin /> : <Login />}
+              {isAuthenticated ? <UserAdmin /> : <Login />}
 
             </ToastProvider>
           </DevicesProvider>

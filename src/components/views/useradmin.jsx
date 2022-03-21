@@ -7,7 +7,7 @@ import { DevicesContext } from '../../context/devices';
 import DeviceData from '../device/deviceData';
 import DeviceOverview from '../device/overview';
 
-export default function SignIn() {
+export default function UserAdmin() {
   const [deviceState] = useContext(DevicesContext);
 
   return (
