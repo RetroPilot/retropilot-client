@@ -9,22 +9,21 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { UserContext } from '../../context/users';
+import { login } from '../../api/auth';
 
-export default function SignIn() {
+export default function Login() {
   const [loading, setLoading] = useState(false);
   const [state, dispatch] = useContext(UserContext);
   console.log('component', state);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     dispatch({ type: 'toggle_button' });
 
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    login(data.get('email'), data.get('password'))
+      .then((result) => console.log('result', result))
+      .catch(console.error);
 
     setLoading(true);
   };
@@ -80,7 +79,7 @@ export default function SignIn() {
                 Sign In
               </LoadingButton>
 
-              <Link href="#Forgot" variant="body2">
+              <Link href="#forgot" variant="body2">
                 New Here or Forgotten password?
               </Link>
             </Box>

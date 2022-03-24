@@ -2,21 +2,22 @@ import React, { useState } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import Login from './components/views/login';
-import UserAdmin from './components/views/useradmin';
+import { getSession } from './api/auth';
+
+import Login from './components/views/Login';
+import UserAdmin from './components/views/UserAdmin';
 import GlobalSnack from './components/widgets/globalSnack';
 import DevicesProvider from './context/devices';
 import ToastProvider from './context/toast';
 import UserProvider from './context/users';
-import * as authenticationController from './controllers/authentication';
 
 function App() {
   const [isAuthenticated, setAuthenticated] = useState(false);
 
-  authenticationController.getSession().then((session) => {
+  getSession().then((session) => {
     const { authenticated } = session.data;
     setAuthenticated(authenticated);
-  });
+  }).catch(console.error);
 
   const theme = React.useMemo(
     () => createTheme({

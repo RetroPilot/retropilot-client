@@ -36,6 +36,11 @@
       "ignoreTemplateLiterals": true
     }],
 
+    // disallow else after a return in an if
+    // https://eslint.org/docs/rules/no-else-return
+    // retropilot: allow else-if...
+    "no-else-return": ["error", { "allowElseIf": true }],
+
     // restrict file extensions that may contain JSX
     // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md
     // retropilot: we don't care about this

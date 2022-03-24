@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 
-import * as deviceController from '../../controllers/devices';
+import { listDevices } from '../../api/devices';
 
 import ACTIONS from './actions';
 import reducer from './reducer';
@@ -32,11 +32,11 @@ function DevicesProvider({ children }) {
       }
     };
 
-    deviceController.getAllDevices().then((devices) => {
+    listDevices().then((devices) => {
       console.log('devices store', devices);
 
       dispatch({ type: ACTIONS.FETCH_ALL_DONGLES, data: devices });
-    });
+    }).catch(console.error);
 
     return () => {
       // Clean up the websocket
